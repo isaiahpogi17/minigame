@@ -472,7 +472,7 @@ function endSymbolSearchGame(success, reason) {
     }
 
     setTimeout(() => {
-        fetch('https://glitch-minigames/symbolSearchResult', {
+        fetch('https://' + GetParentResourceName() + '/symbolSearchResult', {
             method: 'POST',
             body: JSON.stringify({ success: success, reason: reason })
         });
@@ -504,7 +504,7 @@ function closeSymbolSearchGame() {
 
     $('#symbol-search-container').hide();
 
-    fetch('https://glitch-minigames/symbolSearchClose', {
+    fetch('https://' + GetParentResourceName() + '/symbolSearchClose', {
         method: 'POST',
         body: JSON.stringify({})
     });

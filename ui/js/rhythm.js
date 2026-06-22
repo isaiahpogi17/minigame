@@ -351,6 +351,12 @@ function resetRhythmGame() {
 function startRhythmGame() {
     rhythmActive = true;
     
+    // Clear any existing intervals and event listeners to prevent duplicate running instances
+    if (spawnInterval) clearInterval(spawnInterval);
+    if (moveInterval) clearInterval(moveInterval);
+    document.removeEventListener('keydown', handleRhythmKeyPress);
+    document.removeEventListener('keyup', handleRhythmKeyRelease);
+    
     buildRhythmUI();
     
     resetRhythmGame();
@@ -367,8 +373,14 @@ function startRhythmGame() {
 function stopRhythmGame(success) {
     rhythmActive = false;
     
-    clearInterval(spawnInterval);
-    clearInterval(moveInterval);
+    if (spawnInterval) {
+        clearInterval(spawnInterval);
+        spawnInterval = null;
+    }
+    if (moveInterval) {
+        clearInterval(moveInterval);
+        moveInterval = null;
+    }
     
     document.removeEventListener('keydown', handleRhythmKeyPress);
     document.removeEventListener('keyup', handleRhythmKeyRelease);
@@ -397,7 +409,7 @@ function stopRhythmGame(success) {
             accuracy: notesHit > 0 ? Math.round((notesHit / totalNotes) * 100) : 0
         };
         
-        fetch('https://glitch-minigames/rhythmResult', {
+        fetch('https://' + GetParentResourceName() + '/rhythmResult', {
             method: 'POST',
             body: JSON.stringify(result)
         });
@@ -406,5 +418,10 @@ function stopRhythmGame(success) {
 }
 
 $(document).ready(function() {
-
+    // Export rhythmFunctions so app.js can stop/close the rhythm minigame cleanly during force close triggers
+    window.rhythmFunctions = {
+        start: setupRhythmGame,
+        stop: () => stopRhythmGame(false),
+        close: () => stopRhythmGame(false)
+    };
 });

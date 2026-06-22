@@ -289,7 +289,7 @@ let circleClickGame = {
         setTimeout(function () {
             $('#circle-click-container').fadeOut(200);
 
-            $.post('https://glitch-minigames/circleClickResult', JSON.stringify({
+            $.post('https://' + GetParentResourceName() + '/circleClickResult', JSON.stringify({
                 success: success,
                 successes: self.successes,
                 failures: self.failures
@@ -302,7 +302,7 @@ let circleClickGame = {
         cancelAnimationFrame(this.animationFrame);
         $(document).off('keydown.circleclick');
         $('#circle-click-container').hide();
-        $.post('https://glitch-minigames/circleClickClose', JSON.stringify({}));
+        $.post('https://' + GetParentResourceName() + '/circleClickClose', JSON.stringify({}));
     }
 };
 

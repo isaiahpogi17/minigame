@@ -190,7 +190,7 @@
             $('#message').text('FIREWALL BYPASSED!');
             playSoundSafe('sound-success');
 
-            fetch('https://glitch-minigames/hackSuccess', {
+            fetch('https://' + GetParentResourceName() + '/hackSuccess', {
                 method: 'POST',
                 body: JSON.stringify({})
             });
@@ -217,7 +217,7 @@
         $('#message').text(reason || 'BREACH FAILED! Security alerted.');
         playSoundSafe('sound-failure');
 
-        fetch('https://glitch-minigames/hackFail', {
+        fetch('https://' + GetParentResourceName() + '/hackFail', {
             method: 'POST',
             body: JSON.stringify({})
         });
