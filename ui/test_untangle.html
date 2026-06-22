@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untangle (Rope Tie) Hacker Tester</title>
+    <!-- Import Outfit and Share Tech Mono Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2dd4a8;
+            --primary-glow: rgba(45, 212, 168, 0.4);
+            --bg-dark: #070a13;
+            --bg-card: rgba(13, 22, 38, 0.7);
+            --border-glow: rgba(45, 212, 168, 0.2);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --danger: #ff4444;
+            --danger-glow: rgba(255, 68, 68, 0.4);
+            --success: #22c55e;
+            --terminal-bg: #090f1a;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(45, 212, 168, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.08) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 5px 0;
+            text-shadow: 0 0 15px var(--primary-glow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .layout-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Left Side Controls */
+        .controls-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 380px;
+            flex-shrink: 0;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .value-badge {
+            font-family: 'Share Tech Mono', monospace;
+            background: rgba(45, 212, 168, 0.15);
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid var(--border-glow);
+        }
+
+        select, input[type="range"] {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        select {
+            padding: 12px 16px;
+            background: #080f1a;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            background: #080f1a;
+            border-radius: 3px;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--primary);
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .btn-launch {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, #15b793 100%);
+            border: none;
+            color: #070a13;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px var(--primary-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-launch:hover {
+            box-shadow: 0 0 25px var(--primary);
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        /* Console Terminal Panel */
+        .terminal {
+            background: var(--terminal-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            color: #7dd3fc;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(125, 211, 252, 0.15);
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terminal-log {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .log-item {
+            line-height: 1.4;
+        }
+
+        .log-item.info { color: #38bdf8; }
+        .log-item.success { color: #4ade80; font-weight: bold; }
+        .log-item.failure { color: #f87171; font-weight: bold; }
+        .log-item.warning { color: #fbbf24; }
+        .log-item.endpoint { color: #c084fc; }
+        .log-item .timestamp { color: rgba(255, 255, 255, 0.3); margin-right: 5px; }
+
+        /* Right Side Game Frame */
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .iframe-container {
+            position: relative;
+            background: #05080f;
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            overflow: hidden;
+            width: 700px;
+            height: 520px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .iframe-container.active-game {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+        }
+
+        .tip {
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tip strong {
+            color: var(--primary);
+        }
+
+        /* Result Popup Overlay Banner */
+        .result-notification {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50px);
+            opacity: 0;
+            background: rgba(13, 22, 38, 0.95);
+            border: 1px solid var(--border-glow);
+            border-radius: 10px;
+            padding: 12px 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        .result-notification.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .result-notification.success {
+            border-color: var(--success);
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .result-notification.failure {
+            border-color: var(--danger);
+            box-shadow: 0 0 25px rgba(255, 68, 68, 0.3);
+        }
+
+        .result-title {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .result-notification.success .result-title {
+            color: var(--success);
+        }
+
+        .result-notification.failure .result-title {
+            color: var(--danger);
+        }
+
+        .result-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Untangle Hacking Simulator</h1>
+    <div class="subtitle">System Intrusion Hack Tester</div>
+
+    <div class="layout-container">
+        
+        <!-- Controls Sidebar -->
+        <div class="controls-wrapper">
+            <div class="panel">
+                <div class="panel-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    Settings Console
+                </div>
+                
+                <div class="form-group">
+                    <label for="difficulty">
+                        Difficulty Preset
+                    </label>
+                    <select id="difficulty">
+                        <option value="easy">Easy (5 Nodes / 45s)</option>
+                        <option value="medium" selected>Medium (8 Nodes / 60s)</option>
+                        <option value="hard">Hard (11 Nodes / 60s)</option>
+                        <option value="expert">Expert (14 Nodes / 90s)</option>
+                        <option value="custom">Custom Configuration</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="nodes">
+                        Node Count (Ropes)
+                        <span class="value-badge" id="nodes-val">8</span>
+                    </label>
+                    <input type="range" id="nodes" min="4" max="20" value="8">
+                </div>
+
+                <div class="form-group">
+                    <label for="time">
+                        Time Limit
+                        <span class="value-badge" id="time-val">60s</span>
+                    </label>
+                    <input type="range" id="time" min="5" max="300" step="5" value="60">
+                </div>
+
+                <button class="btn-launch" id="start-btn">Execute Exploit</button>
+            </div>
+
+            <!-- Terminal console logs -->
+            <div class="panel" style="padding: 16px;">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span>HACKER_CONSOLE_LOG</span>
+                        <span>v1.0.0</span>
+                    </div>
+                    <div class="terminal-log" id="terminal-log">
+                        <div class="log-item info"><span class="timestamp">[SYSTEM]</span> Console loaded. Ready for injection.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Frame Display -->
+        <div class="game-wrapper">
+            <!-- Intercepted notification banner -->
+            <div class="result-notification" id="result-notification">
+                <div class="result-title">DECRYPTION SUCCESSFUL</div>
+                <div class="result-desc">Network untangled!</div>
+            </div>
+
+            <div class="iframe-container" id="iframe-container">
+                <iframe id="game-frame" src="index.html"></iframe>
+            </div>
+
+            <div class="tip">
+                <span>💡 <strong>Goal:</strong> Drag the dots to untangle the lines. The lines turn green when they don't cross!</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const iframe = document.getElementById('game-frame');
+        const nodesSlider = document.getElementById('nodes');
+        const timeSlider = document.getElementById('time');
+        const nodesVal = document.getElementById('nodes-val');
+        const timeVal = document.getElementById('time-val');
+        const startBtn = document.getElementById('start-btn');
+        const difficultySelect = document.getElementById('difficulty');
+        const iframeContainer = document.getElementById('iframe-container');
+
+        // Handle value sliders displaying their status
+        nodesSlider.addEventListener('input', (e) => {
+            nodesVal.textContent = e.target.value;
+            difficultySelect.value = 'custom';
+        });
+
+        timeSlider.addEventListener('input', (e) => {
+            timeVal.textContent = e.target.value + 's';
+            difficultySelect.value = 'custom';
+        });
+
+        // Difficulty Presets
+        const presets = {
+            easy: { nodes: 5, time: 45 },
+            medium: { nodes: 8, time: 60 },
+            hard: { nodes: 11, time: 60 },
+            expert: { nodes: 14, time: 90 }
+        };
+
+        difficultySelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (presets[val]) {
+                nodesSlider.value = presets[val].nodes;
+                nodesVal.textContent = presets[val].nodes;
+                timeSlider.value = presets[val].time;
+                timeVal.textContent = presets[val].time + 's';
+            }
+        });
+
+        // Set up the terminal logging system
+        function logToConsole(message, type = 'info') {
+            const consoleEl = document.getElementById('terminal-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logItem = document.createElement('div');
+            logItem.className = `log-item ${type}`;
+            logItem.innerHTML = `<span class="timestamp">[${timestamp}]</span> <span class="message">${message}</span>`;
+            consoleEl.appendChild(logItem);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        // Handle incoming NUI messages intercepted from the iframe
+        function handleNuiCallback(url, payload) {
+            const endpoint = url.substring(url.lastIndexOf('/') + 1);
+            logToConsole(`Callback: <strong>${endpoint}</strong>`, 'endpoint');
+            
+            if (endpoint === 'untangleResult') {
+                iframeContainer.classList.remove('active-game');
+                const resultBox = document.getElementById('result-notification');
+                resultBox.className = 'result-notification active ' + (payload.success ? 'success' : 'failure');
+                
+                if (payload.success) {
+                    resultBox.innerHTML = `
+                        <div class="result-title">DECRYPTION SUCCESSFUL</div>
+                        <div class="result-desc">Network untangled! Crossings: ${payload.crossings}</div>
+                    `;
+                    logToConsole(`Result: SUCCESS (Crossings: ${payload.crossings})`, 'success');
+                } else {
+                    resultBox.innerHTML = `
+                        <div class="result-title">DECRYPTION FAILED</div>
+                        <div class="result-desc">Hacking firewall failed or time ran out.</div>
+                    `;
+                    logToConsole(`Result: FAILED`, 'failure');
+                }
+                
+                setTimeout(() => {
+                    resultBox.classList.remove('active');
+                }, 4000);
+            } else if (endpoint === 'untangleClose') {
+                iframeContainer.classList.remove('active-game');
+                logToConsole(`Minigame window closed.`, 'warning');
+            }
+        }
+
+        // Initialize frame content
+        iframe.onload = () => {
+            logToConsole('Exploit engine compiled & injected successfully.', 'success');
+            
+            // Inject styling and mocks to make the UI look right and not throw reference errors
+            try {
+                iframe.contentWindow.document.body.style.backgroundColor = '#070a13';
+                iframe.contentWindow.document.body.style.display = 'flex';
+                iframe.contentWindow.document.body.style.justifyContent = 'center';
+                iframe.contentWindow.document.body.style.alignItems = 'center';
+                iframe.contentWindow.document.body.style.height = '100vh';
+                iframe.contentWindow.document.body.style.margin = '0';
+                
+                // Mock native FiveM GetParentResourceName function
+                iframe.contentWindow.GetParentResourceName = () => 'glitch-minigames';
+                
+                // Intercept $.post requests
+                if (iframe.contentWindow.$) {
+                    iframe.contentWindow.$.post = function(url, data) {
+                        let payload = {};
+                        try {
+                            payload = JSON.parse(data);
+                        } catch(e) {
+                            payload = data;
+                        }
+                        handleNuiCallback(url, payload);
+                        
+                        return {
+                            always: function(cb) { if(cb) cb(); return this; },
+                            done: function(cb) { if(cb) cb(); return this; },
+                            fail: function(cb) { return this; }
+                        };
+                    };
+                }
+            } catch (err) {
+                logToConsole(`Error setting up iframe hooks: ${err.message}`, 'failure');
+            }
+        };
+
+        // Start Test Button action
+        startBtn.addEventListener('click', () => {
+            const nodes = parseInt(nodesSlider.value);
+            const time = parseInt(timeSlider.value) * 1000; // convert to ms
+            
+            logToConsole(`Bypassing node firewalls... (${nodes} layers)`, 'warning');
+            logToConsole(`Configured timer: ${(time/1000).toFixed(0)}s`, 'info');
+            
+            iframeContainer.classList.add('active-game');
+            
+            // Post message to startUntangle game action
+            iframe.contentWindow.postMessage({
+                action: 'startUntangle',
+                config: {
+                    nodeCount: nodes,
+                    timeLimit: time
+                }
+            }, '*');
+            
+            // Set focus inside the frame for keyboard event capture, though Untangle is purely mouse-based
+            iframe.focus();
+        });
+    </script>
+</body>
+</html>
