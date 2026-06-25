@@ -108,6 +108,14 @@ var Untangle = (function () {
         return false;
     }
 
+    function onSegment(p, q, r) {
+        if (q.x <= Math.max(p.x, r.x) && q.x >= Math.min(p.x, r.x) &&
+            q.y <= Math.max(p.y, r.y) && q.y >= Math.min(p.y, r.y)) {
+            return true;
+        }
+        return false;
+    }
+
     function linesIntersect(p1, p2, p3, p4) {
         var d1 = direction(p3, p4, p1);
         var d2 = direction(p3, p4, p2);
@@ -118,6 +126,11 @@ var Untangle = (function () {
             ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) {
             return true;
         }
+
+        if (d1 === 0 && onSegment(p3, p1, p4)) return true;
+        if (d2 === 0 && onSegment(p3, p2, p4)) return true;
+        if (d3 === 0 && onSegment(p1, p3, p2)) return true;
+        if (d4 === 0 && onSegment(p1, p4, p2)) return true;
 
         return false;
     }
