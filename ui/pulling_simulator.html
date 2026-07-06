@@ -862,6 +862,7 @@
             rpm: 0.15, // Idle
             targetRpm: 0.15,
             isAccelerating: false,
+            throttle: 0.0, // Smooth virtual throttle
             
             // Config
             engineConfig: ENGINES.racing,
@@ -1117,6 +1118,7 @@
             state.ropeSnapped = false;
             state.success = false;
             state.rpm = 0.15;
+            state.throttle = 0.0;
             state.snapTimeRemaining = null;
             state.pullDuration = 0;
             state.policeActive = false;
@@ -1140,20 +1142,31 @@
                 return;
             }
 
-            // RPM response calculations
+            // RPM response calculations (Smooth virtual throttle + engine flywheel inertia)
             const accelRate = state.engineConfig.accel;
             const decayRate = state.engineConfig.decay;
 
             if (state.isAccelerating) {
-                // Add high rev friction scaling as RPM approaches 1.0 limit
-                state.rpm += (1.0 - state.rpm) * accelRate * dt;
-                // Add natural engine throttle vibration noise
-                state.rpm += (Math.random() - 0.5) * 0.015;
-                state.rpm = Math.min(1.0, Math.max(0.15, state.rpm));
+                // Throttle opens smoothly
+                state.throttle += (1.0 - state.throttle) * 7.5 * dt;
             } else {
-                state.rpm -= (state.rpm - 0.15) * decayRate * dt;
-                state.rpm = Math.max(0.15, state.rpm);
+                // Throttle closes smoothly
+                state.throttle += (0.0 - state.throttle) * 6.5 * dt;
             }
+            state.throttle = Math.min(1.0, Math.max(0.0, state.throttle));
+
+            // Target RPM maps linearly to throttle
+            let targetRpm = 0.15 + state.throttle * 0.85;
+
+            // Actual RPM follows target RPM with inertia (simulating engine rotational mass)
+            let inertiaRate = state.isAccelerating ? accelRate * 3.8 : decayRate * 3.2;
+            state.rpm += (targetRpm - state.rpm) * inertiaRate * dt;
+
+            // Subtle rev wobble
+            if (state.rpm > 0.4) {
+                state.rpm += (Math.random() - 0.5) * 0.012;
+            }
+            state.rpm = Math.min(1.0, Math.max(0.15, state.rpm));
 
             // Rope State Machine checks
             const rpm = state.rpm;
