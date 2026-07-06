@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Rope Pulling RPM Simulator</title>
+    <meta name="description" content="A premium training simulator for FiveM GTA V ATM pulling robberies to practice RPM throttle management.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --bg-card-hover: rgba(31, 41, 55, 0.8);
+            --border-glow: rgba(59, 130, 246, 0.2);
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --glow-color: 0, 102, 255;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(30, 27, 75, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(15, 23, 42, 0.8) 0%, transparent 50%),
+                linear-gradient(rgba(13, 14, 22, 0.8), rgba(13, 14, 22, 0.9));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Ambient glowing background circles */
+        .ambient-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            filter: blur(100px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .glow-1 { top: 10%; left: 5%; }
+        .glow-2 { bottom: 15%; right: 5%; }
+
+        header {
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(9, 13, 22, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title i {
+            color: var(--accent-orange);
+            font-size: 28px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+
+        .header-title h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .audio-toggle {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .audio-toggle:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+        }
+
+        .audio-toggle.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 30px;
+            gap: 30px;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            z-index: 1;
+        }
+
+        /* Sidebar Panels */
+        .sidebar {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .glass-panel {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: border-color 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+
+        .panel-title i {
+            color: var(--accent-orange);
+        }
+
+        /* Instructions list */
+        .instruction-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+
+        .instruction-item i {
+            margin-top: 3px;
+            font-size: 14px;
+        }
+
+        .key-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Config sliders */
+        .config-group {
+            margin-bottom: 15px;
+        }
+
+        .config-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .config-value {
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        select.config-input {
+            width: 100%;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            font-size: 13.5px;
+        }
+
+        input[type="range"].config-input {
+            width: 100%;
+            accent-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Stats display */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .stat-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--text-main);
+            margin-top: 4px;
+        }
+
+        /* Center Visualizer & Gauges */
+        .center-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: #06090f;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 380px;
+        }
+
+        /* Simulator Overlay UI */
+        .hud-status-text {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .hud-alarm {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: pulse-border 1.5s infinite ease-in-out;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .hud-alarm.active {
+            opacity: 1;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgba(239, 68, 68, 0.8); box-shadow: 0 0 5px rgba(239, 68, 68, 0.3); }
+            50% { border-color: rgba(239, 68, 68, 0.2); box-shadow: 0 0 0px rgba(239, 68, 68, 0); }
+        }
+
+        /* Bottom HUD replica and Dashboard wrapper */
+        .dashboard-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 40px;
+            padding: 10px;
+        }
+
+        /* Tachometer Gauge */
+        .tachometer-gauge {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .gauge-svg {
+            transform: rotate(-90deg);
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 12;
+        }
+
+        .gauge-track {
+            fill: none;
+            stroke: url(#gauge-gradient);
+            stroke-width: 12;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.05s linear;
+        }
+
+        .gauge-sweetspot {
+            fill: none;
+            stroke: rgba(245, 158, 11, 0.25);
+            stroke-dasharray: 440;
+            stroke-width: 16;
+            stroke-linecap: butt;
+        }
+
+        .gauge-center-info {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gauge-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .gauge-unit {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-top: -3px;
+        }
+
+        .gauge-state {
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* In-Game HUD Replica */
+        .ingame-hud-replica {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 320px;
+        }
+
+        .hud-label {
+            font-size: 12px;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .hud-bar-container {
+            width: 100%;
+            height: 16px;
+            background: rgba(20, 20, 20, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            padding: 2px;
+        }
+
+        .hud-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-green);
+            transition: width 0.05s linear;
+        }
+
+        /* Big action buttons */
+        .button-zone {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid transparent;
+        }
+
+        .btn-gas {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #000;
+            border-color: #f59e0b;
+        }
+
+        .btn-gas:hover {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-gas:active {
+            transform: translateY(0);
+        }
+
+        .btn-reset {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+
+        .btn-reset:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Stress Bar */
+        .stress-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .stress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-red));
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+            transition: width 0.3s ease;
+        }
+
+        /* Live status messages */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-coast { background: rgba(156, 163, 175, 0.15); color: var(--text-muted); }
+        .badge-rev { background: rgba(245, 158, 11, 0.15); color: var(--accent-orange); }
+        .badge-sweet { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); animation: pulse-text 1s infinite alternate; }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); animation: shake-badge 0.2s infinite; }
+        .badge-snap { background: rgba(239, 68, 68, 0.3); color: var(--accent-red); border: 1px solid var(--accent-red); }
+        .badge-success { background: rgba(16, 185, 129, 0.3); color: var(--accent-green); border: 1px solid var(--accent-green); }
+
+        @keyframes pulse-text {
+            0% { opacity: 0.8; text-shadow: 0 0 2px rgba(16, 185, 129, 0.2); }
+            100% { opacity: 1; text-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
+        }
+
+        @keyframes shake-badge {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -1px) rotate(-1deg); }
+            20% { transform: translate(-1px, 0px) rotate(1deg); }
+            30% { transform: translate(0px, 1px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 1px) rotate(-1deg); }
+            60% { transform: translate(-1px, -1px) rotate(0deg); }
+            70% { transform: translate(1px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, 0px) rotate(1deg); }
+            90% { transform: translate(1px, -1px) rotate(0deg); }
+            100% { transform: translate(0px, 1px) rotate(-1deg); }
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(9, 13, 22, 0.3);
+        }
+
+        footer a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Info grids for sidebars */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13.5px;
+            margin-bottom: 10px;
+        }
+
+        .info-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .info-row span:last-child {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient glowing backgrounds -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <header>
+        <div class="header-title">
+            <i class="fa-solid fa-truck-ramp-box"></i>
+            <h1>ATM ROPE PULLING SIMULATOR</h1>
+        </div>
+        <button id="btn-audio" class="audio-toggle">
+            <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+            <span id="audio-text">Enable Engine Audio</span>
+        </button>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- Left Sidebar: Controls & Instructions -->
+        <div class="sidebar">
+            
+            <div class="glass-panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <h2>HOW TO PULL</h2>
+                </div>
+                
+                <div class="instruction-item" style="color: var(--accent-orange);">
+                    <i class="fa-solid fa-keyboard"></i>
+                    <div>Hold <span class="key-badge">W</span> or the <span class="key-badge">Up Arrow</span> to apply gas. Release to decelerate. (Or press the <strong>ACCELERATE</strong> button).</div>
+                </div>
+
+                <div class="instruction-item">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <div>Maintain the RPM between <strong>0.75 and 0.90</strong> to pull the ATM out. This is the <strong>Sweet Spot</strong>.</div>
+                </div>
+
+                <div class="instruction-item" style="color: var(--accent-red);">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <div>Exceeding <strong>0.90 RPM</strong> will over-tension the rope. Remaining in the danger zone too long will <strong>snap the rope</strong>!</div>
+                </div>
+
+                <div class="instruction-item">
+                    <i class="fa-solid fa-gauge-simple"></i>
+                    <div>Letting the RPM fall below <strong>0.40</strong> will stop progress and break engine momentum.</div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-sliders"></i>
+                    <h2>SIMULATOR SETUP</h2>
+                </div>
+                
+                <!-- Engine Select -->
+                <div class="config-group">
+                    <div class="config-label-row">
+                        <span>Engine Tuning</span>
+                        <span class="config-value" id="val-engine">Stock</span>
+                    </div>
+                    <select id="select-engine" class="config-input">
+                        <option value="stock">Stock Tailgater (Slower response)</option>
+                        <option value="street">Street Upgrade (Standard)</option>
+                        <option value="racing" selected>Race Performance (Quick revving)</option>
+                        <option value="custom">Extreme Turbo (Highly responsive)</option>
+                    </select>
+                </div>
+
+                <!-- Mount Strength -->
+                <div class="config-group">
+                    <div class="config-label-row">
+                        <span>ATM Mount Strength</span>
+                        <span class="config-value" id="val-strength">10 Ticks</span>
+                    </div>
+                    <input type="range" id="slider-strength" class="config-input" min="5" max="25" value="10">
+                </div>
+
+                <!-- Rope Tension Quality -->
+                <div class="config-group">
+                    <div class="config-label-row">
+                        <span>Rope Quality (Snap Delay)</span>
+                        <span class="config-value" id="val-rope">Stock (600ms)</span>
+                    </div>
+                    <input type="range" id="slider-rope" class="config-input" min="300" max="2000" step="100" value="600">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Center Panel: Canvas visualizer & Dashboard HUDs -->
+        <div class="center-content">
+            
+            <div class="canvas-container">
+                <div class="hud-status-text" id="hud-status-label">ATTACHED & READY</div>
+                <div class="hud-alarm" id="hud-police-alarm">
+                    <i class="fa-solid fa-shield-halved"></i> COPS ALERTED!
+                </div>
+                <canvas id="pullingCanvas"></canvas>
+            </div>
+
+            <div class="glass-panel">
+                <div class="dashboard-controls">
+                    
+                    <!-- Analog Gauges / Tachometer -->
+                    <div class="tachometer-gauge">
+                        <svg class="gauge-svg" width="200" height="200" viewBox="0 0 200 200">
+                            <defs>
+                                <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#10b981" />
+                                    <stop offset="60%" stop-color="#f59e0b" />
+                                    <stop offset="90%" stop-color="#ef4444" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Circle track background -->
+                            <circle class="gauge-bg" cx="100" cy="100" r="70" stroke-dasharray="330 440" />
+                            <!-- Sweetspot highlight background -->
+                            <circle class="gauge-sweetspot" cx="100" cy="100" r="70" stroke-dasharray="66 440" stroke-dashoffset="-247" />
+                            <!-- Dynamic filling line -->
+                            <circle class="gauge-track" id="gauge-fill-circle" cx="100" cy="100" r="70" stroke-dasharray="330 440" stroke-dashoffset="330" />
+                        </svg>
+                        
+                        <div class="gauge-center-info">
+                            <span class="gauge-value" id="txt-gauge-rpm">0.00</span>
+                            <span class="gauge-unit">RPM</span>
+                            <span class="gauge-state status-badge badge-coast" id="badge-gauge-state">Coasting</span>
+                        </div>
+                    </div>
+
+                    <!-- In-Game Replica HUD -->
+                    <div class="ingame-hud-replica">
+                        <span class="hud-label">GAME BOTTOM HUD REPLICA</span>
+                        <div class="hud-bar-container">
+                            <div class="hud-bar-fill" id="hud-bar-fill-element"></div>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); text-align: center;">
+                            Displays the <code>DrawRect</code> progress bar at 0.5 X and 0.98 Y.
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- UI Interaction buttons -->
+                <div class="button-zone">
+                    <button class="action-btn btn-gas" id="btn-gas-control">
+                        <i class="fa-solid fa-gauge"></i> ACCELERATE (HOLD W)
+                    </button>
+                    <button class="action-btn btn-reset" id="btn-reset-sim">
+                        <i class="fa-solid fa-rotate-left"></i> RESET RUN
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Sidebar: Stats & Game State -->
+        <div class="sidebar">
+            
+            <div class="glass-panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <h2>PULL STATE</h2>
+                </div>
+                
+                <div class="info-row">
+                    <span>ATM Status</span>
+                    <span id="txt-atm-status" class="status-badge badge-coast">SECURED</span>
+                </div>
+                
+                <div class="info-row">
+                    <span>Tension Tick Time</span>
+                    <span id="txt-tick-time">5.0s</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Drag Progress Remaining</span>
+                    <span id="txt-drag-progress" style="color: var(--accent-orange);">10 / 10 Ticks</span>
+                </div>
+
+                <div class="stress-container" style="margin-top: 15px;">
+                    <div class="config-label-row">
+                        <span>Stress Level</span>
+                        <span class="config-value" id="txt-stress">0%</span>
+                    </div>
+                    <div class="stress-bar-bg">
+                        <div class="stress-bar-fill" id="stress-bar-fill-element"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-trophy"></i>
+                    <h2>PERFORMANCE</h2>
+                </div>
+                
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="config-label-row" style="justify-content: center; font-size: 11px;">SUCCESSES</div>
+                        <div class="stat-num" id="stat-successes" style="color: var(--accent-green);">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="config-label-row" style="justify-content: center; font-size: 11px;">ROPES SNAPPED</div>
+                        <div class="stat-num" id="stat-snaps" style="color: var(--accent-red);">0</div>
+                    </div>
+                </div>
+
+                <div class="info-row" style="margin-top: 20px;">
+                    <span>Current Pulling Hold Time</span>
+                    <span id="txt-pull-time">0.00s</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Best Success Time</span>
+                    <span id="txt-best-time" style="color: var(--accent-green);">--</span>
+                </div>
+                
+                <div class="info-row">
+                    <span>Success Rate</span>
+                    <span id="txt-success-rate">0%</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        Designed for FiveM ATM Robbery Training | Engine Sound Engine synthesized via <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API" target="_blank">Web Audio API</a>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const canvas = document.getElementById('pullingCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const btnAudio = document.getElementById('btn-audio');
+        const audioIcon = document.getElementById('audio-icon');
+        const audioText = document.getElementById('audio-text');
+        
+        const selectEngine = document.getElementById('select-engine');
+        const valEngine = document.getElementById('val-engine');
+        const sliderStrength = document.getElementById('slider-strength');
+        const valStrength = document.getElementById('val-strength');
+        const sliderRope = document.getElementById('slider-rope');
+        const valRope = document.getElementById('val-rope');
+        
+        const txtGaugeRpm = document.getElementById('txt-gauge-rpm');
+        const badgeGaugeState = document.getElementById('badge-gauge-state');
+        const gaugeFillCircle = document.getElementById('gauge-fill-circle');
+        const hudBarFill = document.getElementById('hud-bar-fill-element');
+        
+        const btnGas = document.getElementById('btn-gas-control');
+        const btnReset = document.getElementById('btn-reset-sim');
+        
+        const txtAtmStatus = document.getElementById('txt-atm-status');
+        const txtTickTime = document.getElementById('txt-tick-time');
+        const txtDragProgress = document.getElementById('txt-drag-progress');
+        const txtStress = document.getElementById('txt-stress');
+        const stressBarFill = document.getElementById('stress-bar-fill-element');
+        const hudStatusLabel = document.getElementById('hud-status-label');
+        const hudPoliceAlarm = document.getElementById('hud-police-alarm');
+        
+        const statSuccesses = document.getElementById('stat-successes');
+        const statSnaps = document.getElementById('stat-snaps');
+        const txtPullTime = document.getElementById('txt-pull-time');
+        const txtBestTime = document.getElementById('txt-best-time');
+        const txtSuccessRate = document.getElementById('txt-success-rate');
+
+        // Simulation State Constants
+        const ENGINES = {
+            stock: { accel: 0.65, decay: 0.75, name: 'Stock' },
+            street: { accel: 1.0, decay: 0.9, name: 'Street' },
+            racing: { accel: 1.6, decay: 1.25, name: 'Race' },
+            custom: { accel: 2.8, decay: 1.8, name: 'Extreme Turbo' }
+        };
+
+        // Live Simulation Variables
+        let state = {
+            rpm: 0.15, // Idle
+            targetRpm: 0.15,
+            isAccelerating: false,
+            
+            // Config
+            engineConfig: ENGINES.racing,
+            maxDragProgress: 10,
+            ropeSnapTimeThreshold: 600, // ms
+            
+            // Core game state
+            dragProgress: 10,
+            ropeSnapped: false,
+            success: false,
+            stress: 0,
+            
+            // Timers & Intervals
+            snapTimeRemaining: null, // Time left before snapping at redline
+            nextProgressTickTime: 0, // Time left in seconds before next tick
+            policeActive: false,
+            
+            // Performance stats
+            totalAttempts: 0,
+            successes: 0,
+            snaps: 0,
+            pullDuration: 0,
+            bestTime: Infinity
+        };
+
+        // Canvas Assets / Geometry setup
+        let carPos = { x: 420, y: 250 };
+        let atmPos = { x: 150, y: 230 };
+        let smokeParticles = [];
+        let sparks = [];
+        let screenShake = 0;
+        let lastTime = 0;
+        let soundEnabled = false;
+
+        // Web Audio API Synthesizer variables
+        let audioCtx = null;
+        let engineOsc = null;
+        let engineFilter = null;
+        let engineGain = null;
+        let tireScreechOsc = null;
+        let tireScreechGain = null;
+        let policeOsc = null;
+        let policeGain = null;
+        let audioInitialized = false;
+
+        // Initialize Audio context on first user gesture
+        function initAudio() {
+            if (audioInitialized) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // 1. Engine sound synthesis (sawtooth wave filtered)
+                engineOsc = audioCtx.createOscillator();
+                engineOsc.type = 'sawtooth';
+                
+                engineFilter = audioCtx.createBiquadFilter();
+                engineFilter.type = 'lowpass';
+                engineFilter.frequency.setValueAtTime(150, audioCtx.currentTime);
+                
+                engineGain = audioCtx.createGain();
+                engineGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+                
+                engineOsc.connect(engineFilter);
+                engineFilter.connect(engineGain);
+                engineGain.connect(audioCtx.destination);
+                engineOsc.start();
+                
+                // 2. Tire screech sound synthesis (triangle wave modulated)
+                tireScreechOsc = audioCtx.createOscillator();
+                tireScreechOsc.type = 'triangle';
+                
+                tireScreechGain = audioCtx.createGain();
+                tireScreechGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+                
+                tireScreechOsc.connect(tireScreechGain);
+                tireScreechGain.connect(audioCtx.destination);
+                tireScreechOsc.start();
+                
+                // 3. Police siren synthesis
+                policeOsc = audioCtx.createOscillator();
+                policeOsc.type = 'sine';
+                
+                policeGain = audioCtx.createGain();
+                policeGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+                
+                policeOsc.connect(policeGain);
+                policeGain.connect(audioCtx.destination);
+                policeOsc.start();
+                
+                audioInitialized = true;
+            } catch (e) {
+                console.error("Audio Synthesis error: ", e);
+            }
+        }
+
+        function playSnapSound() {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+                // Short pulse of noise for rope snap
+                let bufferSize = audioCtx.sampleRate * 0.15;
+                let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                let data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                
+                let noiseNode = audioCtx.createBufferSource();
+                noiseNode.buffer = buffer;
+                
+                let filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                
+                let gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                
+                noiseNode.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                noiseNode.start();
+            } catch(e) {
+                console.error("Snap sound error: ", e);
+            }
+        }
+
+        function playClinkSound() {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+                // Short metal ring sound when pulling ticks occur
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(2000, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.12);
+            } catch(e) {
+                console.error("Clink sound error: ", e);
+            }
+        }
+
+        function playSuccessSound() {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+                // Satisfying success sound chime
+                let notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.35);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + idx * 0.1);
+                    osc.stop(audioCtx.currentTime + idx * 0.1 + 0.4);
+                });
+            } catch(e) {
+                console.error("Success sound error: ", e);
+            }
+        }
+
+        // Toggle Audio
+        btnAudio.addEventListener('click', () => {
+            if (!audioInitialized) {
+                initAudio();
+            }
+            
+            soundEnabled = !soundEnabled;
+            if (soundEnabled) {
+                btnAudio.classList.add('active');
+                audioIcon.className = "fa-solid fa-volume-high";
+                audioText.innerText = "Mute Engine Audio";
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            } else {
+                btnAudio.classList.remove('active');
+                audioIcon.className = "fa-solid fa-volume-xmark";
+                audioText.innerText = "Enable Engine Audio";
+                
+                // Mute gain nodes immediately
+                if (engineGain) engineGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+                if (tireScreechGain) tireScreechGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+                if (policeGain) policeGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+            }
+        });
+
+        // Config Event Listeners
+        selectEngine.addEventListener('change', (e) => {
+            state.engineConfig = ENGINES[e.target.value];
+            valEngine.innerText = state.engineConfig.name;
+        });
+
+        sliderStrength.addEventListener('input', (e) => {
+            state.maxDragProgress = parseInt(e.target.value);
+            valStrength.innerText = `${state.maxDragProgress} Ticks`;
+            resetRun();
+        });
+
+        sliderRope.addEventListener('input', (e) => {
+            state.ropeSnapTimeThreshold = parseInt(e.target.value);
+            valRope.innerText = `${state.ropeSnapTimeThreshold}ms`;
+        });
+
+        // Driving Controls (Hold Key / Button)
+        function startAccelerating() {
+            state.isAccelerating = true;
+            if (!audioInitialized && soundEnabled) initAudio();
+        }
+
+        function stopAccelerating() {
+            state.isAccelerating = false;
+        }
+
+        // Keyboard bindings
+        window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'w' || e.key === 'ArrowUp') {
+                startAccelerating();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key.toLowerCase() === 'w' || e.key === 'ArrowUp') {
+                stopAccelerating();
+            }
+        });
+
+        // Mobile / Mouse UI Button support
+        btnGas.addEventListener('mousedown', startAccelerating);
+        btnGas.addEventListener('mouseup', stopAccelerating);
+        btnGas.addEventListener('mouseleave', stopAccelerating);
+        
+        btnGas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startAccelerating();
+        });
+        btnGas.addEventListener('touchend', stopAccelerating);
+
+        btnReset.addEventListener('click', resetRun);
+
+        // Core Simulator Engine logic
+        function resetRun() {
+            state.dragProgress = state.maxDragProgress;
+            state.ropeSnapped = false;
+            state.success = false;
+            state.rpm = 0.15;
+            state.snapTimeRemaining = null;
+            state.pullDuration = 0;
+            state.policeActive = false;
+            state.stress = 0;
+            smokeParticles = [];
+            sparks = [];
+            hudPoliceAlarm.classList.remove('active');
+            
+            // Set random timer for first tick (5 to 10 seconds like in-game)
+            state.nextProgressTickTime = 5.0 + Math.random() * 5.0;
+            
+            updateUI();
+        }
+
+        // Mechanics Update Loop
+        function updateSimulation(dt) {
+            if (state.ropeSnapped || state.success) {
+                // Decay RPM to zero/idle
+                state.rpm += (0.15 - state.rpm) * 3.0 * dt;
+                state.isAccelerating = false;
+                return;
+            }
+
+            // RPM response calculations
+            const accelRate = state.engineConfig.accel;
+            const decayRate = state.engineConfig.decay;
+
+            if (state.isAccelerating) {
+                // Add high rev friction scaling as RPM approaches 1.0 limit
+                state.rpm += (1.0 - state.rpm) * accelRate * dt;
+                // Add natural engine throttle vibration noise
+                state.rpm += (Math.random() - 0.5) * 0.015;
+                state.rpm = Math.min(1.0, Math.max(0.15, state.rpm));
+            } else {
+                state.rpm -= (state.rpm - 0.15) * decayRate * dt;
+                state.rpm = Math.max(0.15, state.rpm);
+            }
+
+            // Rope State Machine checks
+            const rpm = state.rpm;
+
+            // 1. Coasting / Safe: Low revs
+            if (rpm <= 0.40) {
+                state.snapTimeRemaining = null;
+                // Reset tick timer back to maximum if momentum is completely lost
+                state.nextProgressTickTime = 5.0 + Math.random() * 5.0;
+            } 
+            // 2. Medium Revs (0.40 to 0.75): Tension exists but progress does not increase
+            else if (rpm > 0.40 && rpm <= 0.75) {
+                state.snapTimeRemaining = null;
+                // Accumulate hold time without making progress
+                state.pullDuration += dt;
+            } 
+            // 3. Sweet Spot (0.75 to 0.90): Active pulling!
+            else if (rpm > 0.75 && rpm < 0.90) {
+                state.snapTimeRemaining = null;
+                state.pullDuration += dt;
+                
+                // Tick timer decreases
+                state.nextProgressTickTime -= dt;
+                
+                // Add particle sparks on rope connection
+                if (Math.random() < 0.15) {
+                    createSpark();
+                }
+
+                if (state.nextProgressTickTime <= 0) {
+                    // Dispatcher call event triggers!
+                    state.policeActive = true;
+                    hudPoliceAlarm.classList.add('active');
+                    
+                    // Progress decreases (remaining ticks drop)
+                    state.dragProgress -= 1;
+                    playClinkSound();
+                    
+                    // Screen shake impact
+                    screenShake = 6;
+                    
+                    // Stress increases
+                    state.stress = Math.min(100, state.stress + 10);
+                    
+                    // Setup next tick (random 5-10s interval)
+                    state.nextProgressTickTime = 5.0 + Math.random() * 5.0;
+                    
+                    // Check Success state
+                    if (state.dragProgress <= 0) {
+                        state.success = true;
+                        state.totalAttempts++;
+                        state.successes++;
+                        playSuccessSound();
+                        
+                        if (state.pullDuration < state.bestTime) {
+                            state.bestTime = state.pullDuration;
+                        }
+                    }
+                }
+            } 
+            // 4. Danger Zone / Redline (>= 0.90): Rope starts to snap
+            else if (rpm >= 0.90) {
+                state.pullDuration += dt;
+                
+                if (state.snapTimeRemaining === null) {
+                    // Pick a random snap threshold (like in-game 400ms-1000ms)
+                    state.snapTimeRemaining = state.ropeSnapTimeThreshold / 1000;
+                }
+                
+                // Decrease remaining snap countdown
+                state.snapTimeRemaining -= dt;
+                screenShake = 3; // Engine vibrating violently
+                
+                // Sparks flying furiously
+                if (Math.random() < 0.4) {
+                    createSpark();
+                }
+
+                if (state.snapTimeRemaining <= 0) {
+                    // Rope breaks!
+                    state.ropeSnapped = true;
+                    state.totalAttempts++;
+                    state.snaps++;
+                    playSnapSound();
+                    screenShake = 15; // Huge jerk screen shake
+                    state.rpm = 0.15; // Engine drops power instantly
+                }
+            }
+        }
+
+        // Web Audio Synth Update calculations
+        function synthAudio() {
+            if (!soundEnabled || !audioInitialized || !audioCtx) return;
+            
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                // 1. Synthesize Engine
+                let baseFreq = 50; 
+                let pitchScale = 360; 
+                let targetFreq = baseFreq + (state.rpm * pitchScale);
+                
+                // Add cylinder vibration frequency jitter
+                targetFreq += (Math.random() - 0.5) * 5;
+                
+                engineOsc.frequency.setTargetAtTime(targetFreq, audioCtx.currentTime, 0.04);
+                
+                // Adjust lowpass filter frequency
+                let targetFilter = 140 + (state.rpm * 800);
+                engineFilter.frequency.setTargetAtTime(targetFilter, audioCtx.currentTime, 0.05);
+                
+                // Gain volume levels
+                let targetGain = 0.03 + (state.rpm * 0.14);
+                if (state.ropeSnapped || state.success) {
+                    targetGain = 0.02; // soft hum
+                }
+                engineGain.gain.setTargetAtTime(targetGain, audioCtx.currentTime, 0.06);
+
+                // 2. Tire Screech (skidding tires under load)
+                if (state.rpm > 0.45 && !state.ropeSnapped && !state.success && state.isAccelerating) {
+                    let screechFreq = 950 + (state.rpm * 200) + (Math.random() * 80);
+                    tireScreechOsc.frequency.setTargetAtTime(screechFreq, audioCtx.currentTime, 0.02);
+                    
+                    let screechVol = (state.rpm - 0.45) * 0.035;
+                    tireScreechGain.gain.setTargetAtTime(screechVol, audioCtx.currentTime, 0.05);
+                } else {
+                    tireScreechGain.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.1);
+                }
+
+                // 3. Cops siren fade-in
+                if (state.policeActive) {
+                    let sirenWobble = 650 + Math.sin(audioCtx.currentTime * 6) * 150;
+                    policeOsc.frequency.setValueAtTime(sirenWobble, audioCtx.currentTime);
+                    policeGain.gain.setTargetAtTime(0.025, audioCtx.currentTime, 0.3);
+                } else {
+                    policeGain.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.2);
+                }
+
+            } catch (e) {
+                console.error("Audio update failure", e);
+            }
+        }
+
+        // Render Canvas graphics
+        function drawCanvas() {
+            ctx.save();
+            if (screenShake > 0) {
+                let dx = (Math.random() - 0.5) * screenShake;
+                let dy = (Math.random() - 0.5) * screenShake;
+                ctx.translate(dx, dy);
+                screenShake *= 0.85;
+                if (screenShake < 0.2) screenShake = 0;
+            }
+
+            // Clear Screen
+            ctx.fillStyle = '#06090f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw City skyline
+            ctx.fillStyle = '#0a0d16';
+            ctx.fillRect(0, 160, canvas.width, 90);
+            
+            // Neon lights dots
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
+            ctx.fillRect(80, 120, 25, 40);
+            ctx.fillRect(200, 100, 30, 60);
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.25)';
+            ctx.fillRect(350, 130, 20, 30);
+            ctx.fillRect(520, 110, 45, 50);
+
+            // Draw Road
+            ctx.fillStyle = '#111420';
+            ctx.fillRect(0, 250, canvas.width, canvas.height - 250);
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(0, 250);
+            ctx.lineTo(canvas.width, 250);
+            ctx.stroke();
+
+            // Center lane lines
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.2)';
+            ctx.setLineDash([20, 15]);
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, 300);
+            ctx.lineTo(canvas.width, 300);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw concrete wall
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(60, 170, 60, 80);
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(60, 170, 60, 80);
+
+            // Draw entities
+            drawATM();
+            drawCar();
+            drawRope();
+            drawParticles();
+
+            ctx.restore();
+        }
+
+        function drawATM() {
+            let x = atmPos.x;
+            let y = atmPos.y;
+            
+            if (state.success) {
+                x = carPos.x - 45;
+                y = carPos.y + 15;
+            }
+
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(x - 15, y - 25, 30, 45);
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(x - 15, y - 25, 30, 45);
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(x - 10, y - 20, 20, 14);
+            
+            if (!state.success) {
+                ctx.fillStyle = '#10b981';
+                ctx.font = '7px monospace';
+                ctx.fillText("ONLINE", x - 8, y - 11);
+            } else {
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '7px monospace';
+                ctx.fillText("ALARM", x - 8, y - 11);
+            }
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(x - 10, y - 2, 20, 2);
+        }
+
+        function drawCar() {
+            let x = carPos.x;
+            let y = carPos.y;
+
+            ctx.fillStyle = '#1e3a8a';
+            ctx.beginPath();
+            ctx.moveTo(x - 50, y);
+            ctx.lineTo(x - 50, y - 15);
+            ctx.quadraticCurveTo(x - 45, y - 23, x - 30, y - 23);
+            ctx.lineTo(x - 20, y - 23);
+            ctx.lineTo(x - 10, y - 38);
+            ctx.lineTo(x + 20, y - 38);
+            ctx.lineTo(x + 35, y - 21);
+            ctx.lineTo(x + 55, y - 18);
+            ctx.lineTo(x + 58, y);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.moveTo(x - 16, y - 25);
+            ctx.lineTo(x - 8, y - 35);
+            ctx.lineTo(x + 18, y - 35);
+            ctx.lineTo(x + 28, y - 25);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = '#000';
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.arc(x - 30, y + 5, 11, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(x + 35, y + 5, 11, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            let exX = x - 52;
+            let exY = y - 4;
+            
+            if (state.rpm > 0.4 && Math.random() < state.rpm * 0.7) {
+                createSmoke(exX, exY, state.rpm * 1.5);
+            }
+        }
+
+        function drawRope() {
+            if (state.success) {
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 3.5;
+                ctx.beginPath();
+                ctx.moveTo(carPos.x - 50, carPos.y - 10);
+                ctx.lineTo(carPos.x - 45, carPos.y + 15);
+                ctx.stroke();
+                return;
+            }
+
+            if (state.ropeSnapped) {
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 3;
+                
+                ctx.beginPath();
+                ctx.moveTo(atmPos.x + 15, atmPos.y - 2);
+                ctx.quadraticCurveTo(atmPos.x + 40, atmPos.y + 10, atmPos.x + 45, atmPos.y + 40);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(carPos.x - 50, carPos.y - 10);
+                ctx.quadraticCurveTo(carPos.x - 80, carPos.y + 5, carPos.x - 90, carPos.y + 45);
+                ctx.stroke();
+                return;
+            }
+
+            let startX = atmPos.x + 15;
+            let startY = atmPos.y - 2;
+            let endX = carPos.x - 50;
+            let endY = carPos.y - 10;
+
+            ctx.lineWidth = 3;
+
+            if (state.rpm >= 0.90) {
+                ctx.strokeStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                let midX = (startX + endX) / 2;
+                let midY = (startY + endY) / 2 + (Math.random() - 0.5) * 6;
+                ctx.lineTo(midX, midY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            } else if (state.rpm > 0.75) {
+                ctx.strokeStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                let midX = (startX + endX) / 2;
+                let midY = (startY + endY) / 2 + (Math.random() - 0.5) * 3;
+                ctx.lineTo(midX, midY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            } else {
+                ctx.strokeStyle = '#b45309';
+                let sag = Math.max(0, 18 - (state.rpm * 22));
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.quadraticCurveTo((startX + endX)/2, (startY + endY)/2 + sag, endX, endY);
+                ctx.stroke();
+            }
+        }
+
+        function createSmoke(x, y, scale) {
+            smokeParticles.push({
+                x: x,
+                y: y,
+                vx: -1 - Math.random() * 2,
+                vy: -0.5 - Math.random() * 1,
+                size: 3 + Math.random() * 4,
+                alpha: 0.6 * scale,
+                life: 1.0
+            });
+        }
+
+        function createSpark() {
+            sparks.push({
+                x: atmPos.x - 15 + Math.random() * 5,
+                y: atmPos.y - 10 + Math.random() * 20,
+                vx: Math.random() * 3 - 0.5,
+                vy: -1.5 - Math.random() * 3,
+                size: 1.5 + Math.random() * 2,
+                life: 1.0
+            });
+        }
+
+        function drawParticles() {
+            smokeParticles.forEach((p, idx) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.size += 0.2;
+                p.alpha -= 0.02;
+                p.life -= 0.02;
+
+                ctx.fillStyle = `rgba(156, 163, 175, ${p.alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            smokeParticles = smokeParticles.filter(p => p.life > 0);
+
+            sparks.forEach((s, idx) => {
+                s.x += s.vx;
+                s.y += s.vy;
+                s.vy += 0.1;
+                s.life -= 0.035;
+
+                ctx.fillStyle = `rgba(251, 191, 36, ${s.life})`;
+                ctx.fillRect(s.x, s.y, s.size, s.size);
+            });
+            sparks = sparks.filter(s => s.life > 0);
+        }
+
+        function updateUI() {
+            const rpm = state.rpm;
+            txtGaugeRpm.innerText = rpm.toFixed(2);
+            
+            const circumference = 330;
+            const offset = circumference - (rpm * circumference);
+            gaugeFillCircle.style.strokeDashoffset = offset;
+
+            const fillPercent = Math.max(0.0, Math.min(100.0, rpm * 100));
+            hudBarFill.style.width = `${fillPercent}%`;
+
+            if (rpm > 0.75) {
+                hudBarFill.style.backgroundColor = 'rgb(178, 34, 34)';
+                badgeGaugeState.className = "gauge-state status-badge badge-danger";
+                badgeGaugeState.innerText = rpm >= 0.90 ? "Danger" : "Perfect";
+            } else if (rpm > 0.20) {
+                hudBarFill.style.backgroundColor = 'rgb(255, 127, 80)';
+                badgeGaugeState.className = "gauge-state status-badge badge-rev";
+                badgeGaugeState.innerText = "Revving";
+            } else {
+                hudBarFill.style.backgroundColor = 'rgb(50, 205, 50)';
+                badgeGaugeState.className = "gauge-state status-badge badge-coast";
+                badgeGaugeState.innerText = "Coasting";
+            }
+
+            if (state.ropeSnapped) {
+                txtAtmStatus.innerText = "ROPE SNAPPED";
+                txtAtmStatus.className = "status-badge badge-snap";
+                hudStatusLabel.innerText = "ROPE SNAPPED! TRY AGAIN.";
+                hudStatusLabel.style.color = "var(--accent-red)";
+            } else if (state.success) {
+                txtAtmStatus.innerText = "PULLED OUT";
+                txtAtmStatus.className = "status-badge badge-success";
+                hudStatusLabel.innerText = "ATM DETACHED! GO GO GO!";
+                hudStatusLabel.style.color = "var(--accent-green)";
+            } else {
+                txtAtmStatus.innerText = "SECURED";
+                txtAtmStatus.className = "status-badge badge-coast";
+                
+                if (rpm > 0.75 && rpm < 0.90) {
+                    hudStatusLabel.innerText = "PULLING ATM OUT...";
+                    hudStatusLabel.style.color = "var(--accent-green)";
+                } else if (rpm >= 0.90) {
+                    hudStatusLabel.innerText = "WARNING: HIGH TENSION!";
+                    hudStatusLabel.style.color = "var(--accent-red)";
+                } else if (rpm > 0.40) {
+                    hudStatusLabel.innerText = "APPLY MORE THROTTLE...";
+                    hudStatusLabel.style.color = "var(--accent-orange)";
+                } else {
+                    hudStatusLabel.innerText = "READY TO DRAG";
+                    hudStatusLabel.style.color = "var(--text-muted)";
+                }
+            }
+
+            txtTickTime.innerText = state.ropeSnapped || state.success ? "--" : `${state.nextProgressTickTime.toFixed(1)}s`;
+            txtDragProgress.innerText = `${state.dragProgress} / ${state.maxDragProgress} Ticks`;
+            
+            txtStress.innerText = `${state.stress}%`;
+            stressBarFill.style.width = `${state.stress}%`;
+
+            statSuccesses.innerText = state.successes;
+            statSnaps.innerText = state.snaps;
+            txtPullTime.innerText = `${state.pullDuration.toFixed(2)}s`;
+            txtBestTime.innerText = state.bestTime === Infinity ? "--" : `${state.bestTime.toFixed(2)}s`;
+            
+            const rate = state.totalAttempts > 0 ? Math.round((state.successes / state.totalAttempts) * 100) : 0;
+            txtSuccessRate.innerText = `${rate}%`;
+        }
+
+        function gameLoop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            const dtCap = Math.min(0.1, dt);
+
+            updateSimulation(dtCap);
+            synthAudio();
+            updateUI();
+            drawCanvas();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        resetRun();
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
