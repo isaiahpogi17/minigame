@@ -1,0 +1,85 @@
+.memorizeBlock {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: solid max(.1vw, 1px) black;
+	border-radius: 5px;
+	background-color: rgb(34,40,50);
+	width: max(25vw, 300px);
+	height: max(25vw, 300px);
+	display: none;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.memorizeBlock p {
+    padding-top: 20%;
+    color: white;
+}
+
+.timing {
+	display: block;
+	margin-left: 50%;
+	transform: translate(-50%);
+	font-size: max(2vw, 20px);
+	-webkit-text-stroke-width: max(.1vw,1px);
+    -webkit-text-stroke-color: black;
+    text-align: center;
+}
+
+.interval {
+	margin-top: 5%;
+	margin-left: 50%;
+	transform: translate(-50%);
+	color: white;
+	width: max(3vw, 30px);
+	padding: 1.5vw;
+	background-color: rgb(76,88,122);
+	font-size: max(1.5vw, 15px);
+	border-radius: 10px;
+}
+
+.middleText {
+	text-align: center;
+	margin-left: 50%;
+	transform: translate(-50%);
+	font-size: max(3vw, 30px);
+	-webkit-text-stroke-width: max(.05vw,.5px);
+    -webkit-text-stroke-color: black;
+}
+
+.middleText .failMemorize {
+    padding-top: 20%;
+	font-size: max(1.8vw, 20px);
+}
+
+.grid {
+	width: max(24.8vw, 298px);
+	height: max(24.8vw, 298px);
+	margin-left: max(.1vw, 1px);
+	border-collapse: seperate;
+	border-spacing: max(.7vw, 7px);
+}
+
+.block {
+	background-color: rgb(76,88,122);
+	font-size: max(2.25vw, 22.5px);
+	-webkit-text-stroke-width: max(.08vw,.8px);
+    -webkit-text-stroke-color: black;
+	text-align: center;
+	height: max(3.25vw, 40px);
+	width: max(3.25vw, 41px);
+}
+
+.block:hover {
+	cursor: pointer;
+}
+
+.block.highlighted {
+	background-color: lightgrey;
+}
+
+.block.wrong {
+	background-color: red;
+}

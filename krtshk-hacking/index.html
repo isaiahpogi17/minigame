@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../mock-callbacks.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+        integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="screen" style="display: none;">
+        <div class="screen-icon"></div>
+        <div class="screen-text"></div>
+        <audio id="gameStageSuccess">
+            <source src="sounds/correct.ogg" type="audio/ogg" />
+        </audio>
+        <audio id="gameSuccess">
+            <source src="sounds/finish.ogg" type="audio/ogg" />
+        </audio>
+        <audio id="gameStart">
+            <source src="sounds/start.ogg" type="audio/ogg" muted />
+        </audio>
+        <audio id="gameFailed">
+            <source src="sounds/wrong.ogg" type="audio/ogg" muted />
+        </audio>
+    </div>
+
+    <div id="path-container" style="display: none;">
+        <div id="path-game-container">
+            <div id="path-grid"></div>
+            <div id="path-timer-container" class="timer-container">
+                <div id="path-timer-bar-outer" class="timer-outer">
+                    <div id="path-timer-bar-inner" class="timer-inner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="spot-container" style="display: none;">
+        <div id="spot-target" style="display: none;"></div>
+        <div id="spot-grid" style="display: none;"></div>
+
+        <div id="spot-timer-container" class="timer-container" style="display: none;">
+            <div id="spot-timer-bar-outer" class="timer-outer">
+                <div id="spot-timer-bar-inner" class="timer-inner"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="math-container" style="display: none;">
+        <div id="math-grid"></div>
+        <div id="math-buttons">
+            <div id="math-clear" class="math-button">Clear</div>
+            <div id="math-submit" class="math-button">Submit</div>
+        </div>
+        <div id="math-timer-container" class="timer-container">
+            <div id="math-timer-bar-outer" class="timer-outer">
+                <div id="math-timer-bar-inner" class="timer-inner"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="simonsays-container" style="display: none;">
+        <div class="keypad" id="keypad">
+        </div>
+    </div>
+
+    <div class="pincrack-container" style="display: none;">
+        <div class="password-container" style="display: none;">
+            <div id="1" class="password"></div>
+            <div id="2" class="password"></div>
+            <div id="3" class="password"></div>
+            <div id="4" class="password"></div>
+        </div>
+
+        <div id="pincrack-timer-container" class="timer-container">
+            <div id="pincrack-timer-bar-outer" class="timer-outer">
+                <div id="pincrack-timer-bar-inner" class="timer-inner"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dot-container" style="display: none;">
+        <div class="dot-circle"></div>
+    </div>
+    
+    <div id="datastream-container" style="display: none;">
+        <div id="datastream-game-container">
+            <div id="datastream-canvas-container">
+                <canvas id="datastream-canvas"></canvas>
+                <div id="datastream-packet"></div>
+                <div class="binary-code"></div>                
+            </div>
+            <div id="datastream-score">0</div>
+            <div id="datastream-timer-container" class="timer-container">
+                <div id="datastream-timer-bar-outer" class="timer-outer">
+                    <div id="datastream-timer-bar-inner" class="timer-inner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="mathtempo-game-container" style="display: none;">
+        <div id="mathtempo-target-area"></div>
+        <div id="mathtempo-target-line"></div>
+        <div id="mathtempo-game-over">
+            <h2>Game Over!</h2>
+            <div id="mathtempo-final-score">Score: 0</div>
+        </div>
+    </div>  
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./js/dot.js"></script>
+    <script src="./js/pincrack.js"></script>
+    <script src="./js/simonsays.js"></script>
+    <script src="./js/path.js"></script>
+    <script src="./js/spot.js"></script>
+    <script src="./js/math.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/flappy.js"></script>
+    <script src="./js/mathtempo.js"></script>
+</body>
+
+</html>

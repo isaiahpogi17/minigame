@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../mock-callbacks.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Racing System</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,300&family=Uchen&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/solid.css" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="lockpick.css">
+  <link rel="stylesheet" type="text/css" href="scramble.css">
+  <link rel="stylesheet" type="text/css" href="memorize.css">
+  <link rel="stylesheet" type="text/css" href="keystroke.css">
+  <link rel="stylesheet" type="text/css" href="photo.css">
+  <link rel="stylesheet" type="text/css" href="notebook.css">
+  <link rel="stylesheet" type="text/css" href="movingtarget.css">
+</head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/@mojs/core@1.2.1/dist/mo.umd.min.js"></script>
+    <div class = "lockpick">    
+      <section id="padlock">
+        <div id="shackle"></div>
+        <div>
+          <div id="notch-dial" class="dial">
+            <div id="notch" class="appear-a"></div>
+          </div>
+          <div id="line-dial" class="dial">
+            <div id="line"></div>
+          </div>
+        </div>
+        <div id="lock"></div>
+      </section>      
+    </div>
+
+    <div class = "scramble">
+      <div class="minigame">
+          <div class="splash"><div class="fa hacker">&#xf21b;</div><span class="text">PREPARING INTERFACE...</span></div>
+          <div class="hack hidden">
+              <div class="find"></div>
+              <div class="timer">00:00</div>
+              <div class="codes"></div>
+          </div>
+      </div>      
+    </div> 
+    
+    <div class = "memorizeBlock" >
+    </div>  
+
+    <div class="keystroke">
+      <div class="minigame">
+        <div class="splash"><div class="fa hacker">&#xf11c;</div><span class="text">PREPARING INTERFACE...</span></div>
+        <div class="hack hidden">
+            <div class="bar"></div>
+            <div class="letters"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="photo_frame">
+      <div class="photo_border">
+        <div class="photo"></div>
+        <span class="photo_description">No description!</span>
+      </div>
+    </div>
+
+    <div class="voltlab" style="display: none;">
+      <img style="top: 0; left: 0; width: 100%; min-height: 100%; position: fixed;" src="./files/empty.png"/> 
+    </div>
+
+    <div class="headbag" style="display: none; width: 100%; height: 100%; border: none; margin: 0px; overflow: hidden;">
+      <img src="./files/headbag.jpg" style="opacity: 0.99; width: auto; height: auto; min-width: 100%; min-height: 100%;">
+    </div>
+
+    <div class="book-start-page">
+      <div class="book">
+        <img src="./files/notebook-bb40e780.png" alt="">
+        <input type="text" class="header" id="nheader" value="My Notebook" name="" id="" maxlength="19">
+        <input type="text" class="desc" id="ndesc" value="Description" name="" id="" maxlength="27">
+        <div class="button">Open</div>
+        <div class="clip"></div>
+      </div>
+      
+      <div class="papers">
+        <img src="./files/notebook-inside-59e32722.png" class="inside1" alt="">
+        <img src="./files/notebook-inside-59e32722.png" class="inside2" alt="">
+        <img src="./files/paper-e1f1720d.png" class="page1" alt="">
+        <img src="./files/paper-e1f1720d.png" class="page2" alt="">
+        <div class="back-text">Back</div>
+        <div class="next-text">Next Page</div>
+        <div class="next-border">
+        </div>
+        <div class="back-border">
+        </div>
+
+        <div class="paper-1">
+          <div class="page-number pageone" id="1">1</div>
+          <input type="text" value="Dear Book!" id="header-1" maxlength="19" class="paper-header one-1">
+          <textarea class="custom-input one-2" id="text-1" maxlength="912">Write Something</textarea>
+        </div>
+
+        <div class="paper-2">
+          <div class="page-number pagetwo" id="2">2</div>
+          <input type="text" value="Dear Book!" id="header-2" maxlength="19" class="paper-header two-1">
+          <textarea class="custom-input two-2" id="text-2" maxlength="931">Write Something</textarea>
+        </div>
+      </div>
+    </div>
+    
+    <div class="moving-target" id="moving-target" style="display: none;">
+      <div class="current-target" id="current-target">🔥</div>
+    </div>
+
+    <div class="xhaircontainer" style="width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; display: none; align-items: center; justify-content: center;">
+	    <div class="xhair" style="display: none; border-radius: 100%; border: 1px solid white; width: 1px; height: 1px; background-color: white;"></div>
+	  </div>	
+
+  </body>
+  <script src="lockpick.js"></script>
+  <script src="scramble.js"></script>
+  <script src="memorize.js"></script>
+  <script src="keystroke.js"></script>
+  <script src="photo.js"></script>
+  <script src="voltlab.js"></script>
+  <script src="xhair.js"></script>
+  <script src="headbag.js"></script>
+  <script src="notebook.js"></script>
+  <script src="movingtarget.js"></script>
+</html>

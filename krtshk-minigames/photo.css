@@ -1,0 +1,37 @@
+.photo_frame {
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+    align-items: center;    
+}
+
+.photo_border {
+    width: 900px;
+    height: 750px;
+    background-color: #212121;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    word-break: break-all;
+}
+
+.photo {
+    width: 95%;
+    height: 83%;
+    margin-top: 30px;
+    background-position: center;
+    background-size: cover;
+}
+
+.photo_description {
+    color: white;
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-right: 5px;
+    font-family: "Permanent Marker", cursive;
+    font-size: 1.5em;
+    text-align: center;
+}
