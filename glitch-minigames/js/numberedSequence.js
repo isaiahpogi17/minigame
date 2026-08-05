@@ -132,7 +132,7 @@ function startNumberedSequenceRound() {
     numberedSequenceGameState.currentExpectedNumber = 1;
     numberedSequenceGameState.wrongPresses = 0;
 
-    $('.numbered-sequence-square').removeClass('lit selected correct wrong').text('');
+    $('.numbered-sequence-square').removeClass('lit selected correct wrong').css('animation-delay', '').text('');
 
     generateNumberedSequence();
 
@@ -174,7 +174,7 @@ function restartCurrentRound() {
     numberedSequenceGameState.playerSequence = [];
     numberedSequenceGameState.currentExpectedNumber = 1;
 
-    $('.numbered-sequence-square').removeClass('lit selected correct wrong').text('');
+    $('.numbered-sequence-square').removeClass('lit selected correct wrong').css('animation-delay', '').text('');
 
     generateNumberedSequence();
 
@@ -228,7 +228,8 @@ function generateNumberedSequence() {
 function displayNumberedPattern() {
     numberedSequenceGameState.numberedSquares.forEach(item => {
         const square = $(`.numbered-sequence-square[data-index="${item.index}"]`);
-        square.addClass('lit').text(item.number);
+        const randomDelay = (Math.random() * -1.6).toFixed(2);
+        square.addClass('lit').css('animation-delay', `${randomDelay}s`).text(item.number);
     });
 }
 
@@ -243,7 +244,7 @@ function hideNumbersStartGame() {
     numberedSequenceGameState.showingPattern = false;
     numberedSequenceGameState.gameActive = true;
 
-    $('.numbered-sequence-square').removeClass('lit').text('');
+    $('.numbered-sequence-square').removeClass('lit').css('animation-delay', '').text('');
 
     $('#numbered-sequence-message').text(`Click the squares in numerical order (1-${numberedSequenceGameState.config.sequenceLength})`);
 
