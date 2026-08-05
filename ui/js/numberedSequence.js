@@ -231,35 +231,47 @@ function generateNumberedSequence() {
 }
 
 function displayNumberedPattern() {
-    const sequenceLength = numberedSequenceGameState.numberedSquares.length;
-    const showTime = numberedSequenceGameState.config.showTime;
+    const squares = numberedSequenceGameState.numberedSquares;
+    const half = Math.floor(squares.length / 2);
     
-    const maxStaggerTime = showTime * 0.6;
-    const interval = maxStaggerTime / Math.max(1, sequenceLength - 1);
-
-    const shuffledSquares = [...numberedSequenceGameState.numberedSquares];
-    for (let i = shuffledSquares.length - 1; i > 0; i--) {
+    // Split the squares randomly into two groups
+    const shuffled = [...squares];
+    for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [shuffledSquares[i], shuffledSquares[j]] = [shuffledSquares[j], shuffledSquares[i]];
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-
-    shuffledSquares.forEach((item, index) => {
-        const square = $(`.numbered-sequence-square[data-index="${item.index}"]`);
-        const delay = index * interval;
+    const group1 = shuffled.slice(0, half);
+    const group2 = shuffled.slice(half);
+    
+    let currentGroup = 1;
+    
+    function tick() {
+        if (!numberedSequenceGameState.showingPattern) return;
         
-        square.removeClass('lit').text('');
-        
-        const timer = setTimeout(() => {
-            if (numberedSequenceGameState.showingPattern) {
+        squares.forEach(item => {
+            const square = $(`.numbered-sequence-square[data-index="${item.index}"]`);
+            const inGroup1 = group1.some(g => g.index === item.index);
+            const inGroup2 = group2.some(g => g.index === item.index);
+            
+            const isVisible = (currentGroup === 1 && inGroup1) || (currentGroup === 2 && inGroup2);
+            
+            if (isVisible) {
                 square.addClass('lit').text(item.number);
+            } else {
+                square.removeClass('lit').text('');
             }
-        }, delay);
+        });
         
+        currentGroup = currentGroup === 1 ? 2 : 1;
+        
+        const nextTimer = setTimeout(tick, 1000);
         if (!numberedSequenceGameState.revealTimeouts) {
             numberedSequenceGameState.revealTimeouts = [];
         }
-        numberedSequenceGameState.revealTimeouts.push(timer);
-    });
+        numberedSequenceGameState.revealTimeouts.push(nextTimer);
+    }
+    
+    tick();
 }
 
 function clearRevealTimeouts() {
@@ -281,7 +293,12 @@ function hideNumbersStartGame() {
     numberedSequenceGameState.showingPattern = false;
     numberedSequenceGameState.gameActive = true;
 
-    $('.numbered-sequence-square').removeClass('lit').text('');
+    $('.numbered-sequence-square').text('');
+
+    // Highlight all active numbered squares (make all boxes highlight)
+    numberedSequenceGameState.numberedSquares.forEach(item => {
+        $(`.numbered-sequence-square[data-index="${item.index}"]`).addClass('lit');
+    });
 
     $('#numbered-sequence-message').text(`Click the squares in numerical order (1-${numberedSequenceGameState.config.sequenceLength})`);
 
