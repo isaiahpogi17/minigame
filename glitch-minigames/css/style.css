@@ -1538,22 +1538,10 @@ body, html {
 }
 
 .numbered-sequence-square.lit {
-    animation: numberedSquareBlink 1.6s infinite ease-in-out;
-}
-
-@keyframes numberedSquareBlink {
-    0%, 75%, 100% {
-        background: linear-gradient(135deg, var(--light-blue), var(--neon-blue));
-        border-color: white;
-        box-shadow: 0 0 20px var(--glow);
-        color: white;
-    }
-    82%, 93% {
-        background: rgba(0, 40, 80, 0.4);
-        border-color: rgba(255, 255, 255, 0.2);
-        box-shadow: none;
-        color: transparent;
-    }
+    background: linear-gradient(135deg, var(--light-blue), var(--neon-blue));
+    border-color: white;
+    box-shadow: 0 0 20px var(--glow);
+    color: white;
 }
 
 .numbered-sequence-square.selected {
@@ -2129,7 +2117,10 @@ body::before, body::after,
 }
 
 .numbered-sequence-square.lit {
-    animation: numberedSquareBlink 1.6s infinite ease-in-out;
+    background: linear-gradient(135deg, var(--light-blue), var(--neon-blue));
+    border-color: white;
+    box-shadow: 0 0 20px var(--glow);
+    color: white;
 }
 
 .numbered-sequence-square.selected {

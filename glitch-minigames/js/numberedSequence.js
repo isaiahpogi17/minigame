@@ -57,6 +57,7 @@ function startNumberedSequenceGame(config = {}) {
         clearTimeout(numberedSequenceGameState.guessTimer);
         numberedSequenceGameState.guessTimer = null;
     }
+    clearRevealTimeouts();
 
     numberedSequenceGameState.config = { ...numberedSequenceGameState.config, ...config };
     numberedSequenceGameState.currentRound = 0;
@@ -126,13 +127,15 @@ function startNumberedSequenceRound() {
         return;
     }
 
+    clearRevealTimeouts();
+
     numberedSequenceGameState.showingPattern = true;
     numberedSequenceGameState.gameActive = false;
     numberedSequenceGameState.playerSequence = [];
     numberedSequenceGameState.currentExpectedNumber = 1;
     numberedSequenceGameState.wrongPresses = 0;
 
-    $('.numbered-sequence-square').removeClass('lit selected correct wrong').css('animation-delay', '').text('');
+    $('.numbered-sequence-square').removeClass('lit selected correct wrong').text('');
 
     generateNumberedSequence();
 
@@ -169,12 +172,14 @@ function restartCurrentRound() {
         return;
     }
 
+    clearRevealTimeouts();
+
     numberedSequenceGameState.showingPattern = true;
     numberedSequenceGameState.gameActive = false;
     numberedSequenceGameState.playerSequence = [];
     numberedSequenceGameState.currentExpectedNumber = 1;
 
-    $('.numbered-sequence-square').removeClass('lit selected correct wrong').css('animation-delay', '').text('');
+    $('.numbered-sequence-square').removeClass('lit selected correct wrong').text('');
 
     generateNumberedSequence();
 
@@ -226,11 +231,42 @@ function generateNumberedSequence() {
 }
 
 function displayNumberedPattern() {
-    numberedSequenceGameState.numberedSquares.forEach(item => {
+    const sequenceLength = numberedSequenceGameState.numberedSquares.length;
+    const showTime = numberedSequenceGameState.config.showTime;
+    
+    const maxStaggerTime = showTime * 0.6;
+    const interval = maxStaggerTime / Math.max(1, sequenceLength - 1);
+
+    const shuffledSquares = [...numberedSequenceGameState.numberedSquares];
+    for (let i = shuffledSquares.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledSquares[i], shuffledSquares[j]] = [shuffledSquares[j], shuffledSquares[i]];
+    }
+
+    shuffledSquares.forEach((item, index) => {
         const square = $(`.numbered-sequence-square[data-index="${item.index}"]`);
-        const randomDelay = (Math.random() * -1.6).toFixed(2);
-        square.addClass('lit').css('animation-delay', `${randomDelay}s`).text(item.number);
+        const delay = index * interval;
+        
+        square.removeClass('lit').text('');
+        
+        const timer = setTimeout(() => {
+            if (numberedSequenceGameState.showingPattern) {
+                square.addClass('lit').text(item.number);
+            }
+        }, delay);
+        
+        if (!numberedSequenceGameState.revealTimeouts) {
+            numberedSequenceGameState.revealTimeouts = [];
+        }
+        numberedSequenceGameState.revealTimeouts.push(timer);
     });
+}
+
+function clearRevealTimeouts() {
+    if (numberedSequenceGameState.revealTimeouts) {
+        numberedSequenceGameState.revealTimeouts.forEach(timer => clearTimeout(timer));
+        numberedSequenceGameState.revealTimeouts = [];
+    }
 }
 
 function updateNumberedSequenceTimer(timeMs) {
@@ -241,10 +277,11 @@ function updateNumberedSequenceTimer(timeMs) {
 }
 
 function hideNumbersStartGame() {
+    clearRevealTimeouts();
     numberedSequenceGameState.showingPattern = false;
     numberedSequenceGameState.gameActive = true;
 
-    $('.numbered-sequence-square').removeClass('lit').css('animation-delay', '').text('');
+    $('.numbered-sequence-square').removeClass('lit').text('');
 
     $('#numbered-sequence-message').text(`Click the squares in numerical order (1-${numberedSequenceGameState.config.sequenceLength})`);
 
@@ -413,6 +450,8 @@ function endNumberedSequenceGame(success) {
     if (!numberedSequenceGameState.gameStarted) {
         return;
     }
+
+    clearRevealTimeouts();
 
     numberedSequenceGameState.gameActive = false;
     numberedSequenceGameState.showingPattern = false;
