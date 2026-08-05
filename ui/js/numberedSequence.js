@@ -232,46 +232,40 @@ function generateNumberedSequence() {
 
 function displayNumberedPattern() {
     const squares = numberedSequenceGameState.numberedSquares;
-    const half = Math.floor(squares.length / 2);
     
-    // Split the squares randomly into two groups
-    const shuffled = [...squares];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    const group1 = shuffled.slice(0, half);
-    const group2 = shuffled.slice(half);
-    
-    let currentGroup = 1;
-    
-    function tick() {
-        if (!numberedSequenceGameState.showingPattern) return;
+    squares.forEach(item => {
+        const square = $(`.numbered-sequence-square[data-index="${item.index}"]`);
         
-        squares.forEach(item => {
-            const square = $(`.numbered-sequence-square[data-index="${item.index}"]`);
-            const inGroup1 = group1.some(g => g.index === item.index);
-            const inGroup2 = group2.some(g => g.index === item.index);
-            
-            const isVisible = (currentGroup === 1 && inGroup1) || (currentGroup === 2 && inGroup2);
+        function runCycle(isVisible) {
+            if (!numberedSequenceGameState.showingPattern) return;
             
             if (isVisible) {
                 square.addClass('lit').text(item.number);
+                const visibleTime = 1000 + Math.random() * 1000;
+                const timer = setTimeout(() => runCycle(false), visibleTime);
+                numberedSequenceGameState.revealTimeouts.push(timer);
             } else {
                 square.removeClass('lit').text('');
+                const hiddenTime = 300 + Math.random() * 300;
+                const timer = setTimeout(() => runCycle(true), hiddenTime);
+                numberedSequenceGameState.revealTimeouts.push(timer);
             }
-        });
+        }
         
-        currentGroup = currentGroup === 1 ? 2 : 1;
+        // Show immediately at the start of the memorization phase
+        square.addClass('lit').text(item.number);
         
-        const nextTimer = setTimeout(tick, 1000);
+        // Schedule first drop-out at a random time
+        const initialVisibleTime = 600 + Math.random() * 1200;
+        const initialTimer = setTimeout(() => {
+            runCycle(false);
+        }, initialVisibleTime);
+        
         if (!numberedSequenceGameState.revealTimeouts) {
             numberedSequenceGameState.revealTimeouts = [];
         }
-        numberedSequenceGameState.revealTimeouts.push(nextTimer);
-    }
-    
-    tick();
+        numberedSequenceGameState.revealTimeouts.push(initialTimer);
+    });
 }
 
 function clearRevealTimeouts() {
