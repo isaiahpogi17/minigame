@@ -243,7 +243,7 @@ function hideNumbersStartGame() {
     numberedSequenceGameState.showingPattern = false;
     numberedSequenceGameState.gameActive = true;
 
-    $('.numbered-sequence-square').text('');
+    $('.numbered-sequence-square').removeClass('lit').text('');
 
     $('#numbered-sequence-message').text(`Click the squares in numerical order (1-${numberedSequenceGameState.config.sequenceLength})`);
 
