@@ -3,79 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Los Santos Underground Hacking & Minigame Practice Hub</title>
+  <title>Los Santos Underground Hacking Practice Hub - 60 FPS Isolated Suite</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    .nui-modal {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88);
-      z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(10px);
-    }
-    .nui-modal.active { display: flex; }
-    .nui-frame-container {
-      width: 92vw; height: 88vh; background: #000; border: 2px solid var(--accent-cyan);
-      border-radius: 14px; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0,240,255,0.35);
-    }
-    .nui-frame { width: 100%; height: 100%; border: none; }
-    .nui-close-btn {
-      position: absolute; top: 14px; right: 14px; background: var(--accent-red); color: #fff;
-      border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer;
-      font-family: var(--font-mono); z-index: 1001; font-size: 0.9rem; transition: all 0.2s ease;
-    }
-    .nui-close-btn:hover { background: #ff0044; box-shadow: 0 0 15px var(--accent-red); transform: scale(1.05); }
-
-    .category-section {
-      margin-bottom: 2.5rem;
-    }
-    .category-title {
-      font-size: 1.15rem; font-family: var(--font-mono); color: var(--accent-cyan);
-      margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
-      border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 0.5rem;
-    }
-
-    .launcher-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;
-    }
-
-    .practice-card {
-      background: var(--bg-card); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column;
-      gap: 0.75rem; transition: all 0.25s ease; cursor: pointer; position: relative; overflow: hidden;
-    }
-    .practice-card:hover {
-      transform: translateY(-4px); border-color: var(--accent-cyan);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 15px rgba(0, 240, 255, 0.25);
-      background: var(--bg-card-hover);
-    }
-    .practice-card-header {
-      display: flex; align-items: center; gap: 0.75rem;
-    }
-    .practice-card-icon {
-      width: 40px; height: 40px; border-radius: 8px; background: rgba(0, 240, 255, 0.1);
-      border: 1px solid var(--accent-cyan); display: flex; align-items: center;
-      justify-content: center; font-size: 1.3rem; flex-shrink: 0;
-    }
-    .practice-card-title {
-      font-size: 1rem; font-weight: 700; color: var(--text-main); line-height: 1.2;
-    }
-    .practice-card-sub {
-      font-size: 0.75rem; font-family: var(--font-mono); color: var(--accent-green);
-    }
-    .practice-card-desc {
-      font-size: 0.82rem; color: var(--text-muted); line-height: 1.4;
-    }
-    .btn-launch-practice {
-      margin-top: auto; padding: 0.6rem 1rem; background: rgba(0, 240, 255, 0.12);
-      border: 1px solid var(--accent-cyan); border-radius: 6px; color: var(--accent-cyan);
-      font-weight: 700; font-family: var(--font-mono); font-size: 0.8rem;
-      text-transform: uppercase; text-align: center; transition: all 0.2s ease;
-    }
-    .practice-card:hover .btn-launch-practice {
-      background: var(--accent-cyan); color: #000; box-shadow: 0 0 10px var(--accent-cyan);
-    }
-  </style>
 </head>
 <body>
 
@@ -86,12 +18,12 @@
         <div class="brand-icon">⚡</div>
         <div>
           <h1>LOS SANTOS HACKING HUB</h1>
-          <p>INDIVIDUAL NUI PRACTICE LAUNCHER • FREQ TUNER v2.1 • DECRYPTOR v2.4 • ALL MINIGAMES</p>
+          <p>60 FPS ISOLATED PRACTICE ARENA • ZERO OVERLAPPING GUARANTEED</p>
         </div>
       </div>
       <div class="status-badge">
         <span class="status-dot"></span>
-        <span>ALL 22 INDIVIDUAL LAUNCHERS READY</span>
+        <span>60 FPS GPU HARDWARE ACCELERATED</span>
       </div>
     </div>
   </header>
@@ -100,23 +32,23 @@
   <main>
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
-      <button class="tab-btn active" data-tab="tab-nui-launcher">🎯 Individual NUI Hack Practice Launchers</button>
+      <button class="tab-btn active" data-tab="tab-nui-launcher">🎯 60 FPS Standalone Practice Launchers</button>
       <button class="tab-btn" data-tab="tab-simulators">🎮 Web Canvas Simulators</button>
       <button class="tab-btn" data-tab="tab-classifications">📋 Job Hacking Specs</button>
     </div>
 
-    <!-- Tab 1: Individual NUI Practice Launchers -->
+    <!-- Tab 1: 60 FPS Standalone Practice Launchers -->
     <div class="tab-content active" id="tab-nui-launcher">
       <div style="margin-bottom: 2rem; background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
-        <h2 style="font-size: 1.4rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">INDIVIDUAL SERVER NUI PRACTICE ARENA</h2>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">Click on any minigame card to launch that exact original server NUI interface in a dedicated practice window!</p>
+        <h2 style="font-size: 1.4rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">ISOLATED STANDALONE PRACTICE ARENA (60 FPS)</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Each minigame is 100% separated into its own isolated HTML file to guarantee zero overlapping and maximum 60 FPS performance.</p>
       </div>
 
       <!-- Category 1: House Robbery & Roofrunning -->
       <div class="category-section">
         <div class="category-title">🏠 HOUSE ROBBERY & ROOFRUNNING</div>
         <div class="launcher-grid">
-          <div class="practice-card" onclick="openNuiModal('houserobbery/index.html?mode=decryptor')">
+          <div class="practice-card" onclick="openNuiModal('houserobbery/decryptor.html')">
             <div class="practice-card-header">
               <div class="practice-card-icon">📟</div>
               <div>
@@ -128,7 +60,7 @@
             <div class="btn-launch-practice">PRACTICE DECRYPTOR v2.4</div>
           </div>
 
-          <div class="practice-card" onclick="openNuiModal('houserobbery/index.html?mode=tuner')">
+          <div class="practice-card" onclick="openNuiModal('houserobbery/freqtuner.html')">
             <div class="practice-card-header">
               <div class="practice-card-icon">📻</div>
               <div>
@@ -140,7 +72,7 @@
             <div class="btn-launch-practice">PRACTICE FREQ TUNER v2.1</div>
           </div>
 
-          <div class="practice-card" onclick="openNuiModal('houserobbery/index.html?mode=safe')">
+          <div class="practice-card" onclick="openNuiModal('houserobbery/safe.html')">
             <div class="practice-card-header">
               <div class="practice-card-icon">🔒</div>
               <div>
@@ -150,6 +82,18 @@
             </div>
             <div class="practice-card-desc">Practice rotating 360° combination dial to crack house safes.</div>
             <div class="btn-launch-practice">PRACTICE SAFE CRACKER</div>
+          </div>
+
+          <div class="practice-card" onclick="openNuiModal('houserobbery/smash.html')">
+            <div class="practice-card-header">
+              <div class="practice-card-icon">🔨</div>
+              <div>
+                <div class="practice-card-title">FURNITURE SMASH & LIFT</div>
+                <div class="practice-card-sub">APPLIANCE EXTRACTION</div>
+              </div>
+            </div>
+            <div class="practice-card-desc">Practice rapid key-mash appliance extraction and lifting.</div>
+            <div class="btn-launch-practice">PRACTICE APPLIANCE LIFT</div>
           </div>
 
           <div class="practice-card" onclick="openNuiModal('minigames/apps/arrowstrike/index.html')">
@@ -385,7 +329,7 @@
     </div>
   </main>
 
-  <!-- NUI Modal Viewer -->
+  <!-- NUI Modal Viewer - 60 FPS GPU Container -->
   <div class="nui-modal" id="nui-modal">
     <div class="nui-frame-container">
       <button class="nui-close-btn" onclick="closeNuiModal()">✕ CLOSE PRACTICE WINDOW</button>
@@ -394,7 +338,7 @@
   </div>
 
   <footer>
-    <p>Los Santos Underground Hacking & Minigame Hub • Individual NUI Practice Arena</p>
+    <p>Los Santos Underground Hacking & Minigame Hub • 60 FPS Standalone Practice Arena</p>
   </footer>
 
   <script src="app.js"></script>

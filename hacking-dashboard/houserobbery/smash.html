@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Furniture Lift & Smash Challenge</title>
+  <link rel="stylesheet" href="hud.css?v=9" />
+  <style>
+    html, body {
+      margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden;
+      background: rgba(7, 9, 14, 0.92) !important;
+      display: flex; justify-content: center; align-items: center;
+      font-family: 'Inter', system-ui, sans-serif;
+      transform: translateZ(0); will-change: transform; backface-visibility: hidden;
+    }
+    #collect-challenge {
+      display: flex !important; visibility: visible !important; opacity: 1 !important;
+      transform: scale(1.3) translateZ(0);
+    }
+  </style>
+</head>
+<body>
+  <div id="collect-challenge">
+    <div class="challenge-stack">
+      <div class="challenge-ring-wrap">
+        <svg class="challenge-ring" width="120" height="120" viewBox="0 0 120 120">
+          <rect class="challenge-ring-base" x="15" y="15" width="90" height="90" rx="4" pathLength="100"></rect>
+          <rect id="challenge-progress-ring" class="challenge-ring-progress" x="15" y="15" width="90" height="90" rx="4" pathLength="100"></rect>
+        </svg>
+        <div class="challenge-key-wrap">
+          <span id="challenge-stage">SMASH</span>
+          <strong id="challenge-key">E</strong>
+        </div>
+      </div>
+      <div class="challenge-details">
+        <div class="challenge-time-track"><div id="challenge-time-fill"></div></div>
+        <div class="challenge-readout">
+          <strong id="challenge-percent">0%</strong>
+          <span id="challenge-instruction">MASH</span>
+        </div>
+        <span class="challenge-hint" id="challenge-hint">TAP 'E' RAPIDLY TO LIFT HEAVY APPLIANCE</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="hud.js?v=9"></script>
+  <script>
+    let progress = 0;
+    const progressRing = document.getElementById('challenge-progress-ring');
+    const percentText = document.getElementById('challenge-percent');
+    window.addEventListener('keydown', (e) => {
+      if (e.key.toUpperCase() === 'E') {
+        progress = Math.min(100, progress + 12);
+        progressRing.style.strokeDashoffset = 100 - progress;
+        percentText.textContent = Math.floor(progress) + '%';
+        if (progress >= 100) {
+          percentText.textContent = '100% SUCCESS!';
+          percentText.style.color = '#00ff9d';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
