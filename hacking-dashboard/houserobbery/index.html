@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>rl_houserobbery</title>
+		<link rel="stylesheet" href="minigame.css?v=7" />
+		<link rel="stylesheet" href="hud.css?v=9" />
+		<link rel="stylesheet" href="broker.css?v=18" />
+		<script src="react.production.min.js?v=7"></script>
+		<script src="react-dom.production.min.js?v=7"></script>
+	</head>
+	<body>
+		<div id="robbery-status-hud">
+			<aside id="house-objectives" aria-hidden="true">
+				<div class="objective-heading">
+					<div class="objective-title-wrap">
+						<span class="noise-mark"></span>
+						<span>HOUSE OBJECTIVES</span>
+					</div>
+					<span id="house-tier">SMALL</span>
+				</div>
+				<div class="objective-list">
+					<div class="objective-row" id="search-objective">
+						<span class="objective-dot"></span>
+						<span class="objective-label">SEARCH</span>
+						<span class="objective-count" id="search-count">0 LEFT</span>
+					</div>
+					<div class="objective-row" id="furniture-objective">
+						<span class="objective-dot"></span>
+						<span class="objective-label">APPLIANCES</span>
+						<span class="objective-count" id="furniture-count">0 LEFT</span>
+					</div>
+				</div>
+				<div class="objective-footer">
+					<span id="safe-objective-status">SAFE LOCKED</span>
+					<span id="objective-total-left">0 TOTAL LEFT</span>
+				</div>
+			</aside>
+
+			<aside id="noise-meter" aria-hidden="true">
+				<div class="noise-heading">
+					<div class="noise-title-wrap">
+						<span class="noise-mark"></span>
+						<span id="noise-text">NOISE</span>
+					</div>
+					<span id="noise-value">0%</span>
+				</div>
+				<div class="noise-track"><div id="noise-fill"></div></div>
+				<div class="noise-footer"><span>ACOUSTIC LEVEL</span><span id="noise-status">STEALTH</span></div>
+			</aside>
+		</div>
+
+		<div id="collect-challenge" aria-hidden="true">
+			<div class="challenge-stack">
+				<div class="challenge-ring-wrap">
+					<svg class="challenge-ring" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+						<rect class="challenge-ring-base" x="15" y="15" width="90" height="90" rx="4" pathLength="100"></rect>
+						<rect id="challenge-progress-ring" class="challenge-ring-progress" x="15" y="15" width="90" height="90" rx="4" pathLength="100"></rect>
+					</svg>
+					<div class="challenge-key-wrap">
+						<span id="challenge-stage">SMASH</span>
+						<strong id="challenge-key">E</strong>
+					</div>
+				</div>
+				<div class="challenge-details">
+					<div class="challenge-time-track"><div id="challenge-time-fill"></div></div>
+					<div class="challenge-readout">
+						<strong id="challenge-percent">0%</strong>
+						<span id="challenge-instruction">MASH</span>
+					</div>
+					<span class="challenge-hint" id="challenge-hint">TAP THE DISPLAYED KEY</span>
+				</div>
+			</div>
+		</div>
+
+		<div id="root"></div>
+		<div id="safe-root"></div>
+		<div id="broker-app" aria-hidden="true"></div>
+		<script src="hud.js?v=9"></script>
+		<script src="minigame-cycle.js?v=1"></script>
+		<script src="minigame.js?v=12"></script>
+		<script src="safe-minigame.js?v=4"></script>
+		<script src="safe-performance.js?v=1"></script>
+		<script src="safe-controls.js?v=1"></script>
+		<script src="broker.js?v=15"></script>
+	</body>
+</html>

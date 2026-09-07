@@ -1,0 +1,5 @@
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#0003}::-webkit-scrollbar-thumb{background:#fff3;border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#ffffff4d}
+
+/* Redline: keep NUI background transparent; no fullscreen black gradient/dim layer. */
+html, body, #root { background: transparent !important; }
+.fixed.inset-0[class*="bg-black"], .absolute.inset-0[class*="bg-black"] { background: transparent !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }

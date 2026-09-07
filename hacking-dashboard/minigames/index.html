@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RL Minigames</title>
+    <style>
+        :root {
+            --red: #a31d1c;
+            --bg: rgba(0, 0, 0, 0.38);
+            --panel: rgba(8, 8, 10, 0.97);
+            --card: rgba(14, 14, 18, 0.96);
+            --card-hover: rgba(22, 22, 27, 0.98);
+            --text: #f4f4f5;
+            --muted: #93939a;
+            --line: rgba(255, 255, 255, 0.08);
+            --red-line: rgba(163, 29, 28, 0.55);
+        }
+
+        html, body, #root {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+            font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+            color: var(--text);
+        }
+
+        * { box-sizing: border-box; }
+
+        .game-frame {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            border: 0;
+            display: none;
+            background: transparent;
+            z-index: 20;
+        }
+
+        .game-frame.active { display: block; }
+
+        .tester-shell {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            z-index: 10;
+        }
+
+        .tester-shell.active { display: flex; }
+
+        .tester-panel {
+            width: min(900px, 94vw);
+            max-height: 82vh;
+            border: 1px solid var(--red-line);
+            background: var(--panel);
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+        }
+
+        .tester-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(163, 29, 28, 0.08);
+        }
+
+        .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+
+        .brand-mark {
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            background: #030304;
+            border: 1px solid var(--line);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 900;
+            border-radius: 4px;
+            flex: 0 0 auto;
+        }
+
+        .tester-title {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.1;
+            letter-spacing: 0.2px;
+        }
+
+        .tester-subtitle {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .close-btn {
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            padding: 6px 9px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            flex: 0 0 auto;
+        }
+
+        .close-btn:hover { border-color: var(--red-line); background: rgba(163, 29, 28, 0.14); }
+
+        .tester-body {
+            padding: 10px;
+            max-height: calc(82vh - 50px);
+            overflow-y: auto;
+        }
+
+        .tester-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .game-card {
+            border: 1px solid var(--line);
+            background: var(--card);
+            border-radius: 4px;
+            padding: 8px;
+            cursor: pointer;
+            min-height: 184px;
+            transition: border-color 100ms ease, background 100ms ease;
+        }
+
+        .game-card:hover { border-color: var(--red-line); background: var(--card-hover); }
+
+        .preview-wrap {
+            position: relative;
+            width: 100%;
+            height: 86px;
+            margin-bottom: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 3px;
+            overflow: hidden;
+            background: #050507;
+        }
+
+        .preview-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0.95;
+            transition: transform 120ms ease, opacity 120ms ease;
+        }
+
+        .game-card:hover .preview-wrap { border-color: rgba(163, 29, 28, 0.58); }
+        .game-card:hover .preview-wrap img { transform: scale(1.025); opacity: 1; }
+
+        .preview-label {
+            position: absolute;
+            right: 6px;
+            bottom: 5px;
+            padding: 3px 5px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.72);
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 9px;
+            font-weight: 700;
+            pointer-events: none;
+        }
+
+        .game-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .game-title { margin: 0; font-size: 12px; line-height: 1.2; }
+        .game-subtitle { margin: 2px 0 0; color: var(--muted); font-size: 9px; line-height: 1.25; }
+
+        .game-tag {
+            flex: 0 0 auto;
+            border: 1px solid rgba(163, 29, 28, 0.65);
+            color: #fff;
+            background: rgba(163, 29, 28, 0.24);
+            padding: 3px 5px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .card-actions { display: flex; gap: 7px; align-items: center; }
+
+        .difficulty-select {
+            min-width: 0;
+            width: 100%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.44);
+            color: var(--text);
+            border: 1px solid var(--line);
+            border-radius: 3px;
+            padding: 0 7px;
+            outline: none;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .difficulty-select:focus { border-color: var(--red-line); }
+
+        .play-btn {
+            flex: 0 0 auto;
+            height: 30px;
+            border: 1px solid rgba(190, 45, 43, 0.70);
+            background: var(--red);
+            color: #fff;
+            padding: 0 10px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .play-btn:hover { filter: brightness(1.12); }
+
+        .tester-footer {
+            margin-top: 8px;
+            color: rgba(255, 255, 255, 0.42);
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .tester-body::-webkit-scrollbar { width: 5px; }
+        .tester-body::-webkit-scrollbar-thumb { background: rgba(163, 29, 28, 0.55); border-radius: 2px; }
+
+        @media (max-width: 760px) {
+            .tester-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .tester-panel { width: 94vw; }
+        }
+
+        @media (max-width: 520px) {
+            .tester-grid { grid-template-columns: 1fr; }
+            .tester-subtitle { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <div id="testerShell" class="tester-shell">
+        <div class="tester-panel">
+            <div class="tester-header">
+                <div class="brand">
+                    <div class="brand-mark">RL</div>
+                    <div>
+                        <h1 class="tester-title">Minigame Tester</h1>
+                        <p class="tester-subtitle">Select difficulty, then click preview or TEST to open the actual minigame.</p>
+                    </div>
+                </div>
+                <button class="close-btn" id="testerCloseBtn">ESC</button>
+            </div>
+            <div class="tester-body">
+                <div id="testerGrid" class="tester-grid"></div>
+                <div class="tester-footer">/rlminigame • click a preview or TEST to open the actual minigame</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const APP_PATHS = {
+            wordfall: './apps/wordfall/index.html',
+            pipeflow: './apps/pipeflow/index.html',
+            mines: './apps/mines/index.html',
+            drill: './apps/drill/index.html',
+            tirechange: './apps/tirechange/index.html',
+            engine: './apps/engine/index.html',
+            bodyrepair: './apps/bodyrepair/index.html',
+            arrowstrike: './apps/arrowstrike/index.html',
+            balance: './apps/balance/index.html',
+            chevrons: './apps/chevrons/index.html',
+            circuitrun: './apps/circuitrun/index.html',
+            decryption: './apps/decryption/index.html',
+            gemini: './apps/gemini/index.html',
+            redchip: './apps/redchip/index.html',
+            sequenceletters: './apps/sequenceletters/index.html',
+            serpent: './apps/serpent/index.html',
+            smash: './apps/smash/index.html',
+            pathing: './apps/pathing/index.html',
+            terminal: './apps/terminal/index.html',
+            audition: './apps/audition/index.html',
+            roofrunning: './apps/roofrunning/index.html'
+        };
+
+        const PRELOAD_GAMES = []; // Safety: disabled hidden iframe/CDN preload to reduce CEF load.
+
+        const PREVIEW_IMAGES = {
+            wordfall: './previews/wordfall.png',
+            pipeflow: './previews/pipeflow.png',
+            mines: './previews/mines.png',
+            drill: './previews/drill.png',
+            tirechange: './previews/tirechange.png',
+            engine_partial: './previews/engine_partial.png',
+            engine_full: './previews/engine_full.png',
+            body_partial: './previews/body_partial.png',
+            body_full: './previews/body_full.png',
+            arrowstrike: './previews/drill.png',
+            balance: './previews/pipeflow.png',
+            chevrons: './previews/mines.png',
+            circuitrun: './previews/pipeflow.png',
+            decryption: './previews/wordfall.png',
+            gemini: './previews/mines.png',
+            redchip: './previews/engine_full.png',
+            sequenceletters: './previews/wordfall.png',
+            serpent: './previews/mines.png',
+            smash: './previews/tirechange.png',
+            pathing: './previews/pipeflow.png',
+            terminal: './previews/engine_partial.png',
+            audition: './previews/tirechange.png',
+            roofrunning: './previews/pipeflow.png'
+        };
+
+        const frames = {};
+        let activeGame = null;
+        let testerGames = [];
+        let soundEnabled = true;
+        const pendingTimers = new Set();
+        window.__rlMinigamesSoundEnabled = soundEnabled;
+
+        function safeTimeout(fn, delay) {
+            const id = setTimeout(() => {
+                pendingTimers.delete(id);
+                try { fn(); } catch (e) {}
+            }, Math.max(0, Number(delay) || 0));
+            pendingTimers.add(id);
+            return id;
+        }
+
+        function clearPendingTimers() {
+            pendingTimers.forEach((id) => clearTimeout(id));
+            pendingTimers.clear();
+        }
+
+        const testerShell = document.getElementById('testerShell');
+        const testerGrid = document.getElementById('testerGrid');
+        const testerCloseBtn = document.getElementById('testerCloseBtn');
+
+        function resourceName() {
+            return typeof window.GetParentResourceName === 'function' ? window.GetParentResourceName() : 'rl_minigames';
+        }
+
+        function postNui(name, data) {
+            return fetch(`https://${resourceName()}/${name}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+                body: JSON.stringify(data || {})
+            }).catch(() => {});
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;'
+            }[char]));
+        }
+
+        function injectNuiBridge(html, game) {
+            const appPath = APP_PATHS[game] || '';
+            const basePath = appPath.slice(0, appPath.lastIndexOf('/') + 1);
+            const bridge = `
+                <base href="${basePath}">
+                <script>
+                    window.__rlMinigamesSoundEnabled = true;
+                    try {
+                        if (parent && typeof parent.__rlMinigamesSoundEnabled === 'boolean') {
+                            window.__rlMinigamesSoundEnabled = parent.__rlMinigamesSoundEnabled;
+                        }
+                    } catch (e) {}
+
+                    (function() {
+                        var NativeAudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (!NativeAudioContext || window.__rlSoundPatchApplied) return;
+                        window.__rlSoundPatchApplied = true;
+                        var contexts = [];
+                        var nativeConnect = window.AudioNode && window.AudioNode.prototype && window.AudioNode.prototype.connect;
+
+                        function applySoundState(ctx) {
+                            if (!ctx || !ctx.__rlMasterGain) return;
+                            try {
+                                ctx.__rlMasterGain.gain.value = window.__rlMinigamesSoundEnabled ? 1 : 0;
+                            } catch (e) {}
+                        }
+
+                        window.__rlSetMinigameSoundEnabled = function(enabled) {
+                            window.__rlMinigamesSoundEnabled = enabled !== false;
+                            contexts.forEach(applySoundState);
+                        };
+
+                        if (nativeConnect) {
+                            window.AudioNode.prototype.connect = function(destination) {
+                                var args = Array.prototype.slice.call(arguments);
+                                try {
+                                    if (destination && destination.constructor && destination.constructor.name === 'AudioDestinationNode') {
+                                        var ctx = this.context || destination.context;
+                                        if (ctx && ctx.__rlMasterGain) args[0] = ctx.__rlMasterGain;
+                                    }
+                                } catch (e) {}
+                                return nativeConnect.apply(this, args);
+                            };
+                        }
+
+                        function WrappedAudioContext() {
+                            var ctx = arguments.length > 0 ? new NativeAudioContext(arguments[0]) : new NativeAudioContext();
+                            try {
+                                ctx.__rlMasterGain = ctx.createGain();
+                                ctx.__rlMasterGain.connect(ctx.destination);
+                                applySoundState(ctx);
+                                contexts.push(ctx);
+                            } catch (e) {}
+                            return ctx;
+                        }
+
+                        WrappedAudioContext.prototype = NativeAudioContext.prototype;
+                        window.AudioContext = WrappedAudioContext;
+                        window.webkitAudioContext = WrappedAudioContext;
+                    })();
+
+                    window.GetParentResourceName = function() {
+                        try {
+                            if (parent && typeof parent.GetParentResourceName === 'function') return parent.GetParentResourceName();
+                        } catch (e) {}
+                        return 'rl_minigames';
+                    };
+                    try { if (parent && parent.invokeNative) window.invokeNative = parent.invokeNative; } catch (e) {}
+
+                    window.addEventListener('message', function(event) {
+                        var payload = event.data;
+                        if (payload && payload.action === '__rlSound') {
+                            if (typeof window.__rlSetMinigameSoundEnabled === 'function') {
+                                window.__rlSetMinigameSoundEnabled(payload.enabled);
+                            } else {
+                                window.__rlMinigamesSoundEnabled = payload.enabled !== false;
+                            }
+                            return;
+                        }
+                        if (!payload || payload.action !== '__rlInput') return;
+
+                        window.dispatchEvent(new KeyboardEvent(payload.type, {
+                            key: payload.key,
+                            code: payload.code,
+                            repeat: payload.repeat === true,
+                            ctrlKey: payload.ctrlKey === true,
+                            shiftKey: payload.shiftKey === true,
+                            altKey: payload.altKey === true,
+                            metaKey: payload.metaKey === true,
+                            bubbles: true,
+                            cancelable: true
+                        }));
+                    });
+                <\/script>
+            `;
+
+            if (html.includes('<head>')) return html.replace('<head>', `<head>${bridge}`);
+            return `${bridge}${html}`;
+        }
+
+        function ensureFrame(game, onReady) {
+            if (!APP_PATHS[game]) return null;
+
+            if (frames[game]) {
+                if (frames[game].loaded) onReady?.(frames[game].el);
+                else if (typeof onReady === 'function') frames[game].queue.push(onReady);
+                return frames[game].el;
+            }
+
+            const iframe = document.createElement('iframe');
+            iframe.className = 'game-frame';
+            iframe.setAttribute('allowtransparency', 'true');
+            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms');
+
+            frames[game] = { el: iframe, loaded: false, queue: typeof onReady === 'function' ? [onReady] : [], appended: false };
+
+            const loadTimeout = safeTimeout(() => {
+                const record = frames[game];
+                if (!record || record.loaded) return;
+                if (activeGame === game) postNui('failed', { success: false, error: 'frame_load_timeout', game });
+            }, 15000);
+
+            iframe.addEventListener('load', () => {
+                clearTimeout(loadTimeout);
+                pendingTimers.delete(loadTimeout);
+                if (!frames[game]) return;
+                frames[game].loaded = true;
+                try {
+                    if (typeof window.GetParentResourceName === 'function') {
+                        iframe.contentWindow.GetParentResourceName = () => window.GetParentResourceName();
+                    }
+                } catch (e) {}
+
+                const queue = frames[game].queue.splice(0);
+                queue.forEach((fn) => typeof fn === 'function' && fn(iframe));
+            });
+
+            const appendFrame = () => {
+                if (frames[game] && !frames[game].appended) {
+                    document.getElementById('root').appendChild(iframe);
+                    frames[game].appended = true;
+                }
+            };
+
+            fetch(APP_PATHS[game], { cache: 'force-cache' })
+                .then((response) => response.text())
+                .then((html) => {
+                    iframe.srcdoc = injectNuiBridge(html, game);
+                    appendFrame();
+                })
+                .catch(() => {
+                    iframe.src = APP_PATHS[game];
+                    appendFrame();
+                });
+
+            return iframe;
+        }
+
+        function schedulePreloads() {
+            if (!PRELOAD_GAMES.length) return;
+            const preload = () => {
+                PRELOAD_GAMES.forEach((game, index) => {
+                    safeTimeout(() => ensureFrame(game), index * 150);
+                });
+            };
+
+            safeTimeout(preload, 250);
+        }
+
+        function hideAllFrames() {
+            Object.values(frames).forEach(({ el }) => el.classList.remove('active'));
+        }
+
+        function focusFrame(iframe) {
+            requestAnimationFrame(() => {
+                try { iframe.focus(); } catch (e) {}
+                try { iframe.contentWindow && iframe.contentWindow.focus(); } catch (e) {}
+            });
+        }
+
+        function sendToFrame(game, action, data) {
+            const frameRecord = frames[game];
+            if (!frameRecord || !frameRecord.el || !frameRecord.el.contentWindow) return;
+            frameRecord.el.contentWindow.postMessage({ action, data: data || {} }, '*');
+        }
+
+        function sendSoundStateToFrame(game) {
+            const frameRecord = frames[game];
+            if (!frameRecord || !frameRecord.el || !frameRecord.el.contentWindow) return;
+            frameRecord.el.contentWindow.postMessage({ action: '__rlSound', enabled: soundEnabled }, '*');
+        }
+
+        function setSoundEnabled(enabled) {
+            soundEnabled = enabled !== false;
+            window.__rlMinigamesSoundEnabled = soundEnabled;
+            Object.keys(frames).forEach(sendSoundStateToFrame);
+        }
+
+        function cleanPayload(data) {
+            const cleaned = { ...(data || {}) };
+            delete cleaned.__nuiAction;
+            delete cleaned.__postOpenMessages;
+            delete cleaned.__session;
+            return cleaned;
+        }
+
+        function openGame(game, data) {
+            activeGame = game;
+            closeTester(false);
+            ensureFrame(game, (iframe) => {
+                hideAllFrames();
+                iframe.classList.add('active');
+                focusFrame(iframe);
+                sendSoundStateToFrame(game);
+
+                const nuiAction = data?.__nuiAction || 'open';
+                const nuiData = cleanPayload(data);
+                safeTimeout(() => { if (activeGame === game) sendToFrame(game, nuiAction, nuiData); }, 25);
+
+                const postOpenMessages = Array.isArray(data?.__postOpenMessages) ? data.__postOpenMessages : [];
+                postOpenMessages.forEach((message) => {
+                    if (!message || !message.action) return;
+                    const delay = Number(message.delay || 100);
+                    safeTimeout(() => { if (activeGame === game) sendToFrame(game, message.action, message.data || {}); }, delay);
+                });
+            });
+        }
+
+        function closeGame(game) {
+            const target = game || activeGame;
+            clearPendingTimers();
+            if (target) sendToFrame(target, 'close', {});
+            hideAllFrames();
+            activeGame = null;
+        }
+
+        function normalizeDifficultyOption(option) {
+            const isObject = option && typeof option === 'object';
+            const rawValue = isObject
+                ? (option.value ?? option.id ?? option.name ?? option.label ?? option.difficulty ?? '')
+                : option;
+            const rawLabel = isObject
+                ? (option.label ?? option.title ?? option.name ?? rawValue)
+                : rawValue;
+
+            const value = String(rawValue ?? 'medium');
+            const label = String(rawLabel ?? value);
+            return { value, label };
+        }
+
+        function renderTester(games) {
+            testerGames = Array.isArray(games) ? games : [];
+            testerGrid.innerHTML = testerGames.map((game, index) => {
+                const defaultDifficulty = String(game.defaultDifficulty ?? 'medium');
+                const options = (game.difficulties || ['medium']).map((difficulty) => {
+                    const item = normalizeDifficultyOption(difficulty);
+                    const selected = item.value === defaultDifficulty ? 'selected' : '';
+                    return `<option value="${escapeHtml(item.value)}" ${selected}>${escapeHtml(item.label.toUpperCase())}</option>`;
+                }).join('');
+
+                const tag = game.mode || game.game || '';
+                const previewSrc = PREVIEW_IMAGES[game.id] || PREVIEW_IMAGES[game.game] || './previews/wordfall.png';
+
+                return `
+                    <article class="game-card" data-index="${index}">
+                        <div class="preview-wrap">
+                            <img src="${escapeHtml(previewSrc)}" alt="${escapeHtml(game.title)} preview" loading="lazy" />
+                            <span class="preview-label">CLICK TO TEST</span>
+                        </div>
+                        <div class="game-top">
+                            <div>
+                                <h2 class="game-title">${escapeHtml(game.title)}</h2>
+                                <p class="game-subtitle">${escapeHtml(game.subtitle || '')}</p>
+                            </div>
+                            <span class="game-tag">${escapeHtml(tag)}</span>
+                        </div>
+                        <div class="card-actions">
+                            <select class="difficulty-select" data-index="${index}" aria-label="Difficulty">${options}</select>
+                            <button class="play-btn" data-index="${index}">TEST</button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function openTester(games) {
+            closeGame(activeGame);
+            renderTester(games);
+            testerShell.classList.add('active');
+        }
+
+        function closeTester(callClient = true) {
+            testerShell.classList.remove('active');
+            if (callClient) postNui('testerClose', {});
+        }
+
+        function startTester(index) {
+            const game = testerGames[index];
+            if (!game) return;
+
+            const select = testerGrid.querySelector(`.difficulty-select[data-index="${index}"]`);
+            const difficulty = select ? select.value : game.defaultDifficulty;
+            postNui('testerStart', {
+                id: game.id,
+                title: game.title,
+                game: game.game,
+                mode: game.mode,
+                difficulty
+            });
+        }
+
+        testerGrid.addEventListener('click', (event) => {
+            const playButton = event.target.closest('.play-btn');
+            if (playButton) {
+                event.preventDefault();
+                event.stopPropagation();
+                startTester(Number(playButton.dataset.index));
+                return;
+            }
+
+            if (event.target.closest('.difficulty-select')) return;
+
+            const card = event.target.closest('.game-card');
+            if (!card) return;
+            startTester(Number(card.dataset.index));
+        });
+
+        testerGrid.addEventListener('change', (event) => {
+            if (event.target.closest('.difficulty-select')) event.stopPropagation();
+        });
+
+        testerCloseBtn.addEventListener('click', () => closeTester(true));
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && testerShell.classList.contains('active')) closeTester(true);
+        });
+
+        function forwardInputToActiveFrame(event) {
+            if (!activeGame || testerShell.classList.contains('active')) return;
+
+            const frameRecord = frames[activeGame];
+            if (!frameRecord || !frameRecord.el || !frameRecord.el.contentWindow) return;
+
+            frameRecord.el.contentWindow.postMessage({
+                action: '__rlInput',
+                type: event.type,
+                key: event.key,
+                code: event.code,
+                repeat: event.repeat,
+                ctrlKey: event.ctrlKey,
+                shiftKey: event.shiftKey,
+                altKey: event.altKey,
+                metaKey: event.metaKey
+            }, '*');
+        }
+
+        window.addEventListener('keydown', forwardInputToActiveFrame);
+        window.addEventListener('keyup', forwardInputToActiveFrame);
+
+        schedulePreloads();
+
+        window.addEventListener('message', (event) => {
+            let payload = event.data;
+            if (typeof payload === 'string') {
+                try { payload = JSON.parse(payload); } catch (e) {}
+            }
+
+            if (!payload || !payload.action) return;
+
+            if (payload.action === 'openGame') return openGame(payload.game, payload.data);
+            if (payload.action === 'sendGameMessage') return sendToFrame(payload.game, payload.event, payload.data || {});
+            if (payload.action === 'closeGame') return closeGame(payload.game);
+            if (payload.action === 'openTester') return openTester(payload.games || []);
+            if (payload.action === 'closeTester') return closeTester(false);
+            if (payload.action === 'setSoundEnabled') return setSoundEnabled(payload.enabled);
+        });
+    </script>
+</body>
+</html>

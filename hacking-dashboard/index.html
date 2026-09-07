@@ -4,11 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Los Santos Underground Hacking & Minigame Hub</title>
-  <meta name="description" content="Comprehensive classification of all hacking mechanisms, minigames, required tools, and parameters across Los Santos criminal jobs.">
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .nui-modal {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px);
+    }
+    .nui-modal.active { display: flex; }
+    .nui-frame-container {
+      width: 90vw; height: 85vh; background: #000; border: 2px solid var(--accent-cyan);
+      border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,240,255,0.3);
+    }
+    .nui-frame { width: 100%; height: 100%; border: none; }
+    .nui-close-btn {
+      position: absolute; top: 12px; right: 12px; background: var(--accent-red); color: #fff;
+      border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;
+      font-family: var(--font-mono); z-index: 1001;
+    }
+    .nui-close-btn:hover { background: #ff0044; box-shadow: 0 0 12px var(--accent-red); }
+    .suite-btn {
+      padding: 1rem 1.5rem; background: linear-gradient(135deg, rgba(0,240,255,0.2), rgba(0,255,157,0.2));
+      border: 1px solid var(--accent-cyan); border-radius: 10px; color: #fff; font-weight: 700;
+      font-family: var(--font-mono); cursor: pointer; transition: all 0.25s ease; text-transform: uppercase;
+      display: flex; align-items: center; gap: 0.5rem; justify-content: center;
+    }
+    .suite-btn:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 0 20px var(--accent-cyan); }
+  </style>
 </head>
 <body>
 
@@ -16,81 +40,144 @@
   <header>
     <div class="header-container">
       <div class="brand">
-        <div class="brand-icon">💻</div>
+        <div class="brand-icon">⚡</div>
         <div>
           <h1>LOS SANTOS HACKING HUB</h1>
-          <p>VERCEL PRODUCTION EDITION • ALL JOBS CLASSIFIED</p>
+          <p>FULL SERVER MINIGAME EXTRACTOR • FREQ TUNER v2.1 • DECRYPTOR v2.4</p>
         </div>
       </div>
       <div class="status-badge">
         <span class="status-dot"></span>
-        <span>VERCEL DEPLOYMENT READY</span>
+        <span>ORIGINAL NUI MINIGAMES EXTRACTED</span>
       </div>
     </div>
   </header>
 
   <!-- Main Content -->
   <main>
-    <!-- Controls Bar -->
-    <div class="controls-bar">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="search-input" placeholder="Search hacking mechanisms, required items, jobs, or minigames...">
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-nui-launcher">🚀 Play Original NUI Minigames</button>
+      <button class="tab-btn" data-tab="tab-simulators">🎮 Interactive Simulators</button>
+      <button class="tab-btn" data-tab="tab-classifications">📋 Job Hacking Matrix</button>
+    </div>
+
+    <!-- Tab 1: Play Original NUI Minigames -->
+    <div class="tab-content active" id="tab-nui-launcher">
+      <div style="margin-bottom: 2rem; background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+        <h2 style="font-size: 1.4rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">EXTRACTED SERVER NUI MINIGAME SUITES</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Launch and play the exact original FiveM server NUI interfaces extracted directly from the server codebase.</p>
       </div>
 
-      <div class="filter-tags">
-        <button class="filter-btn active" data-filter="all">All Jobs & Hacks</button>
-        <button class="filter-btn" data-filter="house">House Robbery</button>
-        <button class="filter-btn" data-filter="store">Store Robbery</button>
-        <button class="filter-btn" data-filter="oil">Oil Heist</button>
-        <button class="filter-btn" data-filter="carchop">Car Chop / Boosting</button>
-        <button class="filter-btn" data-filter="petty">Petty Crimes & ATM</button>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+        <button class="suite-btn" onclick="openNuiModal('houserobbery/index.html')">
+          <span>📟 LAUNCH DECRYPTOR v2.4 & FREQ TUNER v2.1</span>
+        </button>
+        <button class="suite-btn" onclick="openNuiModal('minigames/index.html')">
+          <span>🎯 LAUNCH MASTER 21 MINIGAMES TESTER</span>
+        </button>
+      </div>
+
+      <!-- Quick Individual App Launchers -->
+      <h3 style="font-size: 1.1rem; color: var(--accent-green); margin-bottom: 1rem; font-family: var(--font-mono);">INDIVIDUAL NUI MINIGAME LAUNCHERS:</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/wordfall/index.html')">🔤 CYBER WORDFALL</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/drill/index.html')">🛠️ HEAVY SAFE DRILL</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/pipeflow/index.html')">🔧 PIPEFLOW CYBER BYPASS</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/mines/index.html')">💣 MINEFIELD MEMORY</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/circuitrun/index.html')">⚡ CIRCUIT RUN TRACK</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/decryption/index.html')">🎨 MASTERMIND DECRYPTION</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/chevrons/index.html')">⏩ CHEVRONS MATCH</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/gemini/index.html')">♊ GEMINI MATRIX GRID</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/redchip/index.html')">🔍 REDCHIP SPOTLIGHT</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/arrowstrike/index.html')">🎯 ARROW STRIKE RHYTHM</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/balance/index.html')">⚖️ NEEDLE BALANCE</button>
+        <button class="filter-btn" style="padding: 1rem;" onclick="openNuiModal('minigames/apps/sequenceletters/index.html')">🔢 SEQUENCE MEMORY</button>
       </div>
     </div>
 
-    <!-- Jobs & Hacking Grid -->
-    <div class="jobs-grid" id="jobs-grid">
-      <!-- Dynamically populated by app.js -->
+    <!-- Tab 2: Playable Simulators -->
+    <div class="tab-content" id="tab-simulators">
+      <div class="sim-studio">
+        <!-- Simulator 1: Mastermind Color Decryption -->
+        <div class="sim-box">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 1.1rem; color: var(--accent-cyan);">1. Mastermind Color Decryption</h3>
+            <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--accent-cyan);">AP DECRYPTION</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Select 4 color pins to crack the encrypted chip sequence (Target: Green, Cyan, Red, Yellow).</p>
+
+          <div class="sim-screen" id="mastermind-screen">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Simulator 2: Cyber WordFall Rain -->
+        <div class="sim-box">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 1.1rem; color: var(--accent-green);">2. Cyber WordFall Rain</h3>
+            <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--accent-green);">STORE TERMINAL</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Type the target word displayed on screen into the input box below to clear it before timeout.</p>
+
+          <div class="sim-screen" id="wordfall-screen">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div class="sim-controls">
+            <input type="text" id="wordfall-input" placeholder="Type target word here..." style="width:100%; padding:0.75rem; background:#111; border:1px solid var(--accent-green); color:#fff; font-family:var(--font-mono); font-size:1rem; border-radius:8px; outline:none;">
+          </div>
+        </div>
+
+        <!-- Simulator 3: Arrow Strike Rhythm -->
+        <div class="sim-box">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 1.1rem; color: var(--accent-amber);">3. Arrow Strike Rhythm Match</h3>
+            <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--accent-amber);">ROOF RUNNING</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Press your keyboard ARROW KEYS (Up, Right, Down, Left) to match the sequence.</p>
+
+          <div class="sim-screen" id="arrow-screen">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Interactive Simulators -->
-    <section class="sim-section">
-      <div class="sim-header">
-        <h2>⚡ LIVE HACKING MINIGAME SIMULATORS</h2>
-        <p style="color: var(--text-muted);">Test and simulate in-game hacking parameters live in your browser before deployment.</p>
+    <!-- Tab 3: Job Hacking Matrix -->
+    <div class="tab-content" id="tab-classifications">
+      <div class="jobs-grid" id="jobs-grid">
+        <!-- Rendered by JS -->
       </div>
-
-      <div class="sim-grid">
-        <!-- Simulator 1: Digit Decryptor -->
-        <div class="sim-card">
-          <h3 style="font-size: 1.1rem; color: var(--accent-cyan);">House Security Panel Decryptor</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">Simulates the 4-digit cycling panel decryptor used in residential house break-ins (`cfg.doorDecrypt`).</p>
-          <div class="sim-display" id="dec-display">
-            <span style="font-size: 2.2rem; letter-spacing: 6px; color: var(--accent-cyan);">----</span>
-            <span style="color: var(--text-muted); font-size: 0.8rem;">CLICK START TO BEGIN CYCLING</span>
-          </div>
-          <button class="sim-btn" id="dec-btn">START DECRYPTOR SIMULATOR</button>
-        </div>
-
-        <!-- Simulator 2: Safe Dial Combination -->
-        <div class="sim-card">
-          <h3 style="font-size: 1.1rem; color: var(--accent-amber);">5-Digit Safe Combination Dial</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">Simulates interior house safe dial rotation (`cfg.safeCrack`) with tolerance windows.</p>
-          <div class="sim-display" id="dial-display">
-            <span style="font-size: 2.2rem; color: var(--accent-amber);">DIAL: 00°</span>
-            <span style="color: var(--text-muted); font-size: 0.8rem;">TARGET PIN [1/5]: MATCH DIAL</span>
-          </div>
-          <button class="sim-btn" id="dial-btn">TURN SAFE DIAL (+14°)</button>
-        </div>
-      </div>
-    </section>
+    </div>
   </main>
 
-  <!-- Footer -->
+  <!-- NUI Modal Viewer -->
+  <div class="nui-modal" id="nui-modal">
+    <div class="nui-frame-container">
+      <button class="nui-close-btn" onclick="closeNuiModal()">✕ CLOSE NUI</button>
+      <iframe class="nui-frame" id="nui-frame" src="about:blank"></iframe>
+    </div>
+  </div>
+
   <footer>
-    <p>Los Santos Underground Hacking & Minigame Classification System • Ready for Vercel Deployment</p>
+    <p>Los Santos Underground Hacking & Minigame Hub • Extracted Original Server NUI Suite</p>
   </footer>
 
   <script src="app.js"></script>
+  <script>
+    function openNuiModal(url) {
+      const modal = document.getElementById('nui-modal');
+      const frame = document.getElementById('nui-frame');
+      frame.src = url;
+      modal.classList.add('active');
+    }
+    function closeNuiModal() {
+      const modal = document.getElementById('nui-modal');
+      const frame = document.getElementById('nui-frame');
+      frame.src = 'about:blank';
+      modal.classList.remove('active');
+    }
+  </script>
 </body>
 </html>

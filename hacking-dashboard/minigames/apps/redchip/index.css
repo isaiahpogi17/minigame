@@ -1,0 +1,5 @@
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#0003}::-webkit-scrollbar-thumb{background:#fff3;border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#ffffff4d}@keyframes fadeIn{0%{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}@keyframes glitch{0%,to{transform:translate(0)}20%{transform:translate(-2px,2px)}40%{transform:translate(-2px,-2px)}60%{transform:translate(2px,2px)}80%{transform:translate(2px,-2px)}}@keyframes scanline{0%{transform:translateY(-100%)}to{transform:translateY(100vh)}}.animate-fadeIn{animation:fadeIn .4s ease-out forwards}.animate-glitch{animation:glitch .3s ease-in-out infinite}*{user-select:none}body{font-family:JetBrains Mono,Fira Code,SF Mono,monospace}
+
+/* Redline: keep NUI background transparent; no fullscreen black gradient/dim layer. */
+html, body, #root { background: transparent !important; }
+.fixed.inset-0[class*="bg-black"], .absolute.inset-0[class*="bg-black"] { background: transparent !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
