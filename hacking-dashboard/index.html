@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Los Santos Underground Hacking & Minigame Hub</title>
+  <meta name="description" content="Comprehensive classification of all hacking mechanisms, minigames, required tools, and parameters across Los Santos criminal jobs.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">💻</div>
+        <div>
+          <h1>LOS SANTOS HACKING HUB</h1>
+          <p>VERCEL PRODUCTION EDITION • ALL JOBS CLASSIFIED</p>
+        </div>
+      </div>
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span>VERCEL DEPLOYMENT READY</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Search hacking mechanisms, required items, jobs, or minigames...">
+      </div>
+
+      <div class="filter-tags">
+        <button class="filter-btn active" data-filter="all">All Jobs & Hacks</button>
+        <button class="filter-btn" data-filter="house">House Robbery</button>
+        <button class="filter-btn" data-filter="store">Store Robbery</button>
+        <button class="filter-btn" data-filter="oil">Oil Heist</button>
+        <button class="filter-btn" data-filter="carchop">Car Chop / Boosting</button>
+        <button class="filter-btn" data-filter="petty">Petty Crimes & ATM</button>
+      </div>
+    </div>
+
+    <!-- Jobs & Hacking Grid -->
+    <div class="jobs-grid" id="jobs-grid">
+      <!-- Dynamically populated by app.js -->
+    </div>
+
+    <!-- Interactive Simulators -->
+    <section class="sim-section">
+      <div class="sim-header">
+        <h2>⚡ LIVE HACKING MINIGAME SIMULATORS</h2>
+        <p style="color: var(--text-muted);">Test and simulate in-game hacking parameters live in your browser before deployment.</p>
+      </div>
+
+      <div class="sim-grid">
+        <!-- Simulator 1: Digit Decryptor -->
+        <div class="sim-card">
+          <h3 style="font-size: 1.1rem; color: var(--accent-cyan);">House Security Panel Decryptor</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Simulates the 4-digit cycling panel decryptor used in residential house break-ins (`cfg.doorDecrypt`).</p>
+          <div class="sim-display" id="dec-display">
+            <span style="font-size: 2.2rem; letter-spacing: 6px; color: var(--accent-cyan);">----</span>
+            <span style="color: var(--text-muted); font-size: 0.8rem;">CLICK START TO BEGIN CYCLING</span>
+          </div>
+          <button class="sim-btn" id="dec-btn">START DECRYPTOR SIMULATOR</button>
+        </div>
+
+        <!-- Simulator 2: Safe Dial Combination -->
+        <div class="sim-card">
+          <h3 style="font-size: 1.1rem; color: var(--accent-amber);">5-Digit Safe Combination Dial</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Simulates interior house safe dial rotation (`cfg.safeCrack`) with tolerance windows.</p>
+          <div class="sim-display" id="dial-display">
+            <span style="font-size: 2.2rem; color: var(--accent-amber);">DIAL: 00°</span>
+            <span style="color: var(--text-muted); font-size: 0.8rem;">TARGET PIN [1/5]: MATCH DIAL</span>
+          </div>
+          <button class="sim-btn" id="dial-btn">TURN SAFE DIAL (+14°)</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Los Santos Underground Hacking & Minigame Classification System • Ready for Vercel Deployment</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

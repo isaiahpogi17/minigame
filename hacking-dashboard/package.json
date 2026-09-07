@@ -1,0 +1,12 @@
+{
+  "name": "los-santos-hacking-hub",
+  "version": "1.0.0",
+  "description": "Comprehensive Los Santos Underground Hacking & Minigame Classification Hub",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": ["fivem", "hacking", "minigames", "fivem-heists"],
+  "author": "Antigravity AI",
+  "license": "MIT"
+}
