@@ -3,7 +3,7 @@
   "name": "los-santos-hacking-hub",
   "builds": [
     {
-      "src": "index.html",
+      "src": "**",
       "use": "@vercel/static"
     }
   ],
