@@ -216,6 +216,24 @@ const HACKING_DATA = [
       { key: "Drill Speed", val: "0.35 to 0.8 Speed" }
     ],
     description: "Manage drill pressure, bit vibration, and heat build-up to drill through 5 to 8 pins without melting the drill bit."
+  },
+  {
+    id: "ap-pathing",
+    name: "Fleeca Pathing (Connect the Dots)",
+    job: "Fleeca Bank & Security Vault",
+    category: "oil",
+    provider: "rl_minigames (AP Pathing)",
+    requiredItem: "Hacker Tablet / Cyber Decryptor",
+    difficulty: "Medium - Hard",
+    timeLimit: "30 Seconds",
+    maxAttempts: "3 Stages (8 Dots Each)",
+    specs: [
+      { key: "Number of Stages", val: "3 Stages" },
+      { key: "Dots per Stage", val: "8 Target Nodes" },
+      { key: "Time Limit", val: "30 Seconds" },
+      { key: "Rule", val: "Click closest dot to form valid path" }
+    ],
+    description: "Navigate through 3 security stages by finding and clicking the closest node path from the start node without breaking the circuit."
   }
 ];
 
